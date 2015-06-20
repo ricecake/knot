@@ -1,4 +1,5 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 		<title>Knot - {% block title %}Collaboration And Stuff{% endblock %}</title>
@@ -11,10 +12,57 @@
 		{% block headExtras %}
 		{% endblock %}
 	</head>
+<body>
+	<nav class="light-blue lighten-1" role="navigation">
+		<div class="nav-wrapper container"><a id="logo-container" href="#" class="brand-logo">Logo</a>
+			<ul class="right hide-on-med-and-down">
+				<li><a href="#">Navbar Link</a></li>
+			</ul>
+			<ul id="nav-mobile" class="side-nav">
+				<li><a href="#">Navbar Link</a></li>
+			</ul>
+			<a href="#" data-activates="nav-mobile" class="button-collapse"><i class="mdi-navigation-menu"></i></a>
+		</div>
+	</nav>
 	<body>
 		<div id="main-content">
 			{% block mainContent %}
 			{% endblock %}
 		</div>
+		<footer class="page-footer orange">
+			<div class="container">
+				<div class="row">
+					<div class="col l6 s12">
+						<h5 class="white-text">Company Bio</h5>
+						<p class="grey-text text-lighten-4">
+							This is a thing I'm making, because I've made things like it before, but not all at once.
+						</p>
+					</div>
+					<div class="col l3 s12">
+						<h5 class="white-text">Settings</h5>
+						<ul>
+							<li><a class="white-text" href="#!">Link 1</a></li>
+							<li><a class="white-text" href="#!">Link 2</a></li>
+							<li><a class="white-text" href="#!">Link 3</a></li>
+							<li><a class="white-text" href="#!">Link 4</a></li>
+						</ul>
+					</div>
+					<div class="col l3 s12">
+						<h5 class="white-text">Connect</h5>
+						<ul>
+							<li><a class="white-text" href="#!">Link 1</a></li>
+							<li><a class="white-text" href="#!">Link 2</a></li>
+							<li><a class="white-text" href="#!">Link 3</a></li>
+							<li><a class="white-text" href="#!">Link 4</a></li>
+						</ul>
+					</div>
+				</div>
+			</div>
+			<div class="footer-copyright">
+				<div class="container">
+					Knot created by <a class="orange-text text-lighten-3" href="https://tfm.nu">TFM</a>
+				</div>
+			</div>
+		</footer>
 	</body>	
 </html>

@@ -7,7 +7,56 @@
 {% endblock %}
 
 {% block mainContent %}
-        Welcome to the jungle!
-        <div class="load-spinner"></div>
-        <div id="testcontent"></div>
+<div class="section no-pad-bot" id="index-banner">
+        <div class="container">
+                <br><br>
+                <h1 class="header center orange-text">Knot</h1>
+                <div class="row center">
+                        <h5 class="header col s12 light">Collaboration or some shit like that.</h5>
+                </div>
+                <div class="row center">
+                        <a href="/" id="download-button" class="btn-large waves-effect waves-light orange">Get Started</a>
+                </div>
+                <br>
+                <div class="load-spinner"></div>
+                <br><br>
+        </div>
+</div>
+
+
+<div class="container">
+        <div class="section">
+<!--   Icon Section   -->
+                <div class="row">
+                        <div class="col s12 m4">
+                                <div class="icon-block">
+                                        <h2 class="center light-blue-text"><i class="mdi-image-flash-on"></i></h2>
+                                        <h5 class="center">Do shit faster</h5>
+                                        <p class="light">Lightning is fast.  Be like lightning.  Incandescent.</p>
+                                </div>
+                        </div>
+
+                        <div class="col s12 m4">
+                                <div class="icon-block">
+                                        <h2 class="center light-blue-text"><i class="mdi-social-group"></i></h2>
+                                        <h5 class="center">Work with people</h5>
+                                        <p class="light">People are pretty alright.  Cooperate with them, or at least pretend to.</p>
+                                </div>
+                        </div>
+
+                        <div class="col s12 m4">
+                                <div class="icon-block">
+                                        <h2 class="center light-blue-text"><i class="mdi-action-settings"></i></h2>
+                                        <h5 class="center">Use technology</h5>
+                                        <p class="light">When people aren't alright, at least the computers are still cold and mechanical.</p>
+                                </div>
+                        </div>
+                </div>
+        </div>
+        <br><br>
+        <div class="section">
+                <div id="testcontent"></div>
+        </div>
+</div>
+
 {% endblock %}
