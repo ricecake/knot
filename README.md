@@ -1,7 +1,15 @@
-# Knot
+knot
+=====
+
 A collaboration suit
 
-TODO:
+Build
+-----
+
+    $ rebar3 compile
+
+TODO
+-----
 * whiteboard
 * text chat
 * video chat
