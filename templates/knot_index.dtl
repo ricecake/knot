@@ -1,0 +1,11 @@
+{% extends "knot_main.dtl" %}
+
+{% block headExtras %}
+{{ block.super }}
+<script src="/js/build/serverList.js"></script>
+{% endblock %}
+
+{% block mainContent %}
+        Welcome to the jungle!
+        <div id="testcontent"></div>
+{% endblock %}

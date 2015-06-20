@@ -7,7 +7,10 @@ var ServerList = React.createClass({
     );
   }
 });
-React.render(
-  <ServerList />,
-  document.getElementById('content')
-);
+
+$(document).ready(function(){
+  React.render(
+    <ServerList />,
+    document.getElementById('testcontent')
+  );
+});

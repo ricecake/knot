@@ -10,7 +10,19 @@
 %% ===================================================================
 
 start(_StartType, _StartArgs) ->
-    knot_sup:start_link().
+	case knot_sup:start_link() of
+		{ok, Pid} ->
+			Dispatch = cowboy_router:compile([
+				{'_', [
+					{"/", knot_page, index},
+					{"/js/[...]",  cowboy_static, {priv_dir, knot, "js/"}},
+					{"/css/[...]", cowboy_static, {priv_dir, knot, "css/"}}
+				]}
+			]),
+			{ok, _} = cowboy:start_http(http, 25, [{ip, {127,0,0,1}}, {port, 8080}],
+							[{env, [{dispatch, Dispatch}]}]),
+			{ok, Pid}
+	end.
 
 stop(_State) ->
-    ok.
+	ok.
