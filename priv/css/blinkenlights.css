@@ -1,3 +1,5 @@
+.brand-logo > img { width: 100%; height: auto; }
+
 .load-spinner {
     margin: 0 auto;
     width:0;
