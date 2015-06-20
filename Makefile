@@ -20,16 +20,17 @@ compile-erl:
 	@$(REBAR) compile
 
 compile-js:
-	@$(JSX) priv/js/src priv/js/build
+	@$(JSX) priv/js/component priv/js/built/component
+	@$(JSX) priv/js/page priv/js/built/page
 clean:
 	@$(REBAR) clean
 
 repl:
 	erl -pz deps/*/ebin -pa ebin
 
-release:
+release: compile
 	@$(REBAR) generate
 
-bundle:
+bundle: release
 	mkdir -p packages;
-	tar czf packages/redash.tar.gz -C rel redash
+	tar czf packages/knot.tar.gz -C rel knot

@@ -9,4 +9,4 @@ erl_crash.dump
 .rebar/
 rel/knot/
 *.swp
-priv/js/build/.module-cache/
+priv/js/built/
