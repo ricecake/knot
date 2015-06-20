@@ -4,6 +4,9 @@
 		<script src="/js/lib/react.min.js"></script>
 		<script src="/js/lib/jquery-2.1.1.min.js"></script>
 		<script src="/js/lib/underscore-min.js"></script>
+		<script src="/js/lib/materialize.min.js"></script>
+		<link   href="/css/blinkenlights.css" rel="stylesheet" type="text/css">
+		<link   href="/css/materialize.min.css" rel="stylesheet" type="text/css" media="screen,projection">
 		{% block headExtras %}
 		{% endblock %}
 	</head>

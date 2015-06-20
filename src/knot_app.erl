@@ -16,7 +16,8 @@ start(_StartType, _StartArgs) ->
 				{'_', [
 					{"/", knot_page, index},
 					{"/js/[...]",  cowboy_static, {priv_dir, knot, "js/"}},
-					{"/css/[...]", cowboy_static, {priv_dir, knot, "css/"}}
+					{"/css/[...]", cowboy_static, {priv_dir, knot, "css/"}},
+					{"/font/[...]", cowboy_static,{priv_dir, knot, "font/"}}
 				]}
 			]),
 			{ok, _} = cowboy:start_http(http, 25, [{ip, {127,0,0,1}}, {port, 8080}],
