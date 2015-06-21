@@ -1,4 +1,11 @@
-.brand-logo > img { width: 100%; height: auto; }
+.brand-logo {
+	background: url("/img/tknot.svg");
+	background-size: contain;
+	background-repeat: no-repeat;
+	max-height:100%;
+	width: 100%;
+	height: 100%;
+}
 
 .load-spinner {
     margin: 0 auto;
