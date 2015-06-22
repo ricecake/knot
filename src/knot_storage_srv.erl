@@ -8,9 +8,10 @@
 
 -export([start_link/0]).
 -export([
+	storeSession/3,
 	findSession/1, deleteSession/1,
 	joinChannel/2, leaveChannel/2,
-	sendChannel/2, channelRoster/1
+	sendChannel/3, channelRoster/1
 ]).
 
 %% ------------------------------------------------------------------
@@ -27,10 +28,14 @@
 start_link() ->
     gen_server:start_link({local, ?SERVER}, ?MODULE, [], []).
 
+storeSession(SessionId, Pid, Meta) ->
+	true = ets:insert(session, {SessionId, Pid, Meta}),
+	ok.
+
 findSession(SessionId) ->
 	case ets:lookup(session, SessionId) of
 		[]    -> undefined;
-		[{NewSessionId, Pid, _StartTime, _Agent, _State, _Meta}] -> {ok, {NewSessionId, Pid}}
+		[{NewSessionId, Pid, _Meta}] -> {ok, {NewSessionId, Pid}}
 	end.
 
 deleteSession(SessionId) -> ets:delete(session, SessionId).
@@ -43,8 +48,8 @@ leaveChannel(Channel, #{ id := Id } = SessionData) ->
 	true = ets:match_delete(channel, {Channel, Id, '_'}),
 	{ok, maps:without([channel], SessionData)}.
 
-sendChannel(Channel, Message) ->
-	[ knot_session:notify(Pid, Message) ||
+sendChannel(Channel, Type, Message) ->
+	[ knot_session:notify(Pid, Type, Message) ||
 		Pid <- ets:select(channel, [{
 			{Channel,'_','$1'},
 			[{'=/=', '$1', self()}],

@@ -61,7 +61,7 @@ initializeNewSession(Req, State) ->
 	{ok, Req2, State#{ sessionid => NewSessionId, pid => Pid }}.
 
 bindExistingSession(Req, State, SessionId) ->
-	case knot_session_srv:findSession(SessionId) of
+	case knot_storage_srv:findSession(SessionId) of
 		undefined -> initializeNewSession(Req, State);
 		{ok, {SessionId, Pid}} ->
 			knot_session:bind(Pid, extractMetaInfo(Req)),
@@ -74,7 +74,7 @@ extractMetaInfo(Req) ->
 	#{ <<"User-Agent">> => UserAgent, <<"IP">> => IP }.
 
 handle_client_task(#{ <<"type">> := Type, <<"content">> := Content, <<"to">> := Recipient } , #{ pid := Pid } = State) ->
-	ok = knot_session:notify(Pid, {direct, Recipient, {Type, Content}}),
+	ok = knot_session:notify(Pid, direct, {Recipient, {Type, Content}}),
 	{ok, State};
 handle_client_task(#{ <<"type">> := Type, <<"content">> := Content } , #{ pid := Pid } = State) ->
 	ok = knot_session:notify(Pid, Type, Content),
