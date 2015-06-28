@@ -2,8 +2,8 @@
 
 {% block headExtras %}
 {{ block.super }}
-<script src="/js/built/component/serverList.js"></script>
-<script src="/js/built/page/index.js"></script>
+<script src="/js/component/chat.js"></script>
+<script src="/js/page/index.js"></script>
 {% endblock %}
 
 {% block mainContent %}
