@@ -12,6 +12,6 @@ $.fn.knotChat = function (options) {
 	options = $.extend({}, defaults, options);
 	return $(this).each(function() {
 	});
-}
+};
 
 }(jQuery));
