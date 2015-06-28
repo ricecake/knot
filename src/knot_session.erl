@@ -66,9 +66,9 @@ orphaned(_Event, State) ->
 
 orphaned({bind, {Socket, Data}}, _From, #{ id := Id, meta := Meta } = State) ->
 	monitor(process, Socket),
-	{ok, State} = storeRow(State#{ socket := Socket, meta := mapMerge(Meta, Data) }),
+	{ok, NewState} = storeRow(State#{ socket := Socket, meta := mapMerge(Meta, Data) }),
 	knot_msg_handler:send(Socket, <<"session-data">>, #{ sessionid => Id }),
-	{reply, ok, ready, State}.
+	{reply, ok, ready, NewState}.
 
 connected({signal, {Type, Data}}, #{ socket := Socket } = State) ->
 	knot_msg_handler:send(Socket, Type, Data),
