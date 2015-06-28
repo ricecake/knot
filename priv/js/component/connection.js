@@ -1,13 +1,22 @@
 ;(function(){
 'use strict';
 
+
+//var obj = { value: [], tree: {} };
+//'a.b.c.d.e.f'.split('.').reduce(function (last, curr) {
+//  console.log(last);
+//  last.tree[curr] = { value: [], tree: {} };
+//  return last.tree[curr];
+//},obj);
+
 var defaults = {
 	eventHandlers: {}
 };
 
 var KnotConn = function (options) {
 	options = _.extend({}, defaults, options);
-	this.eventHandlers = options.eventHandlers;
+	this.eventHandlers = { value: [], tree: {} };
+	this.addEventHandlers(options.eventHandlers);
 	var ws = this.WebSocket = new WebSocket(options.url);
 	ws.onopen = options.onOpen;
 	ws.onmessage = this._messageHandler.bind(this);
