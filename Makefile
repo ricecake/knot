@@ -1,5 +1,4 @@
 REBAR=		./rebar
-JSX=            jsx
 DIALYZER=	dialyzer
 
 
@@ -14,19 +13,16 @@ package: clean get-deps compile release bundle
 get-deps:
 	@$(REBAR) get-deps
 
-compile: compile-erl compile-js
+compile: compile-erl 
 
 compile-erl:
 	@$(REBAR) compile
 
-compile-js:
-	@$(JSX) priv/js/component priv/js/built/component
-	@$(JSX) priv/js/page priv/js/built/page
 clean:
 	@$(REBAR) clean
 
 repl:
-	erl -pz deps/*/ebin -pa ebin
+	erl -pz `pwd`/deps/*/ebin -pa `pwd`/ebin -s knot
 
 release: compile
 	@$(REBAR) generate
