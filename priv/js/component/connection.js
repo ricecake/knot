@@ -51,17 +51,6 @@ function matchingTrieNodes(Key, Trie) {
 		if (node === undefined) {
 			return undefined;
 		}
-		if (_.has(node.tree, '*')) {
-			var subKey = array.slice(offset+1).join('.');
-			callbackList = callbackList.concat(matchingTrieNodes(subKey, node.tree['*']));
-		}
-		if (_.has(node.tree, '#')) {
-			for(var i=1; i<array.length;i++){
-				var subKey = array.slice(offset+i).join('.');
-				callbackList = callbackList.concat(matchingTrieNodes(subKey, node.tree['#']));
-			}
-			callbackList = callbackList.concat(node.tree['#'].value);
-		}
 		if (offset === array.length-1 ) {
 			if (_.has(node.tree, label)) {
 				callbackList = callbackList.concat(node.tree[label].value);
@@ -74,6 +63,19 @@ function matchingTrieNodes(Key, Trie) {
 			}
 			return undefined;
 		} else {
+			if (_.has(node.tree, '*')) {
+				var subKey = array.slice(offset+1).join('.');
+				var newCallbacks = matchingTrieNodes(subKey, node.tree['*']);
+				callbackList = callbackList.concat(newCallbacks);
+			}
+			if (_.has(node.tree, '#')) {
+				for(var i=1; i<array.length;i++){
+					var subKey = array.slice(offset+i).join('.');
+					var newCallbacks = matchingTrieNodes(subKey, node.tree['#']);
+					callbackList = callbackList.concat(newCallbacks);
+				}
+				callbackList = callbackList.concat(node.tree['#'].value);
+			}
 			return node.tree[label];
 		}
 	}, Trie);
