@@ -46,31 +46,23 @@ KnotConn.prototype.addEventHandlers = function(Handlers) {
 };
 
 function matchingTrieNodes(Key, Trie) {
-	//console.log('in match...');
 	var callbackList = [];
 	Key.split('.').reduce(function (node, label, offset, array) {
-		//console.log(Key, node, label);
 		if (node === undefined) {
-			//console.log('undefined');
 			return undefined;
 		}
 		if (_.has(node.tree, '*')) {
-			//console.log('has star');
 			var subKey = array.slice(offset+1).join('.');
 			callbackList = callbackList.concat(matchingTrieNodes(subKey, node.tree['*']));
 		}
 		if (_.has(node.tree, '#')) {
-			//console.log('has hash');
 			for(var i=1; i<array.length;i++){
 				var subKey = array.slice(offset+i).join('.');
-				console.log("in hash", subKey, node.tree['#']);
 				callbackList = callbackList.concat(matchingTrieNodes(subKey, node.tree['#']));
 			}
 			callbackList = callbackList.concat(node.tree['#'].value);
 		}
 		if (offset === array.length-1 ) {
-			//console.log('terminating label...');
-			//console.log([node]);
 			if (_.has(node.tree, label)) {
 				callbackList = callbackList.concat(node.tree[label].value);
 			}
@@ -85,7 +77,6 @@ function matchingTrieNodes(Key, Trie) {
 			return node.tree[label];
 		}
 	}, Trie);
-	console.log(callbackList);
 	return callbackList;
 }
 
@@ -93,7 +84,7 @@ KnotConn.prototype.trigger = function(key, content) {
 	var callbacks = matchingTrieNodes(key, this.eventHandlers);
 	_.map(callbacks, function(callback) {
 		callback(content);
-	});	
+	});
 }
 
 KnotConn.prototype._messageHandler = function(event) {
@@ -101,7 +92,6 @@ KnotConn.prototype._messageHandler = function(event) {
 	var decoded = JSON.parse(event.data);
 	type = decoded.type;
 	content = decoded.content;
-	console.log([type, content]);
 	
 	var callbacks = matchingTrieNodes(type, this.eventHandlers);
 	
