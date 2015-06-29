@@ -33,13 +33,59 @@ var KnotConn = function (options) {
 };
 
 KnotConn.prototype.addEventHandlers = function(Handlers) {
+	var handlers = this.eventHandlers;
 	_.each(Handlers, function(callback, key) {
-		key.split('.').reduce(function (node, label) {
-		  node.tree[label] = { value: [], tree: {} };
-		  return node.tree[label];
-		}, this.eventHandlers);
+		var terminal = key.split('.').reduce(function (node, label) {
+			if(!_.has(node.tree, label)) {
+				node.tree[label] = { value: [], tree: {} };
+			}
+			return node.tree[label];
+		}, handlers);
+		terminal.value.push(callback);
 	});
 };
+
+function matchingTrieNodes(Key, Trie) {
+	console.log('in match...');
+	var callbackList = [];
+	Key.split('.').reduce(function (node, label, offset, array) {
+		console.log(node, label, offset, array);
+		if (node === undefined) {
+			return undefined;
+		}
+		if (_.has(node.tree, '*')) {
+			console.log('has star');
+			var subKey = array.splice(offset+1).join('.');
+			for (var subNode in _.values(node.tree['*'].tree)) {
+				callbackList.concat(matchingTrieNodes(subKey, subNode));
+			}
+		}
+		if (_.has(node.tree, '#')) {
+			console.log('has hash');
+			for(var i=1; i<array.length;i++){
+				var subKey = array.splice(offset+i).join('.');
+				for (var subNode in _.values(node.tree['#'].tree)) {
+					callbackList.concat(matchingTrieNodes(subKey, subNode));
+				}
+			}
+		}
+		if (offset === array.length-1 ) {
+			if (_.has(node.tree, label)) {
+				callbackList.concat(node.tree[label].value);
+			}
+			if (_.has(node.tree, '*')) {
+				callbackList.concat(node.tree['*'].value);
+			}
+			if (_.has(node.tree, '#')) {
+				callbackList.concat(node.tree['#'].value);
+			}
+
+		} else {
+			return node.tree[label];
+		}
+	}, Trie);
+	return callbackList;
+}
 
 KnotConn.prototype._messageHandler = function(event) {
 	var type, content;
@@ -47,7 +93,10 @@ KnotConn.prototype._messageHandler = function(event) {
 	type = decoded.type;
 	content = decoded.content;
 	console.log([type, content]);
-	_.map(this.eventHandlers[type], function(callback) {
+	
+	var callbacks = matchingTrieNodes(type, this.eventHandlers);
+	
+	_.map(callbacks, function(callback) {
 		callback(content);
 	});
 }
