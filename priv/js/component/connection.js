@@ -46,45 +46,54 @@ KnotConn.prototype.addEventHandlers = function(Handlers) {
 };
 
 function matchingTrieNodes(Key, Trie) {
-	console.log('in match...');
+	//console.log('in match...');
 	var callbackList = [];
 	Key.split('.').reduce(function (node, label, offset, array) {
-		console.log(node, label, offset, array);
+		//console.log(Key, node, label);
 		if (node === undefined) {
+			//console.log('undefined');
 			return undefined;
 		}
 		if (_.has(node.tree, '*')) {
-			console.log('has star');
-			var subKey = array.splice(offset+1).join('.');
-			for (var subNode in _.values(node.tree['*'].tree)) {
-				callbackList.concat(matchingTrieNodes(subKey, subNode));
-			}
+			//console.log('has star');
+			var subKey = array.slice(offset+1).join('.');
+			callbackList = callbackList.concat(matchingTrieNodes(subKey, node.tree['*']));
 		}
 		if (_.has(node.tree, '#')) {
-			console.log('has hash');
+			//console.log('has hash');
 			for(var i=1; i<array.length;i++){
-				var subKey = array.splice(offset+i).join('.');
-				for (var subNode in _.values(node.tree['#'].tree)) {
-					callbackList.concat(matchingTrieNodes(subKey, subNode));
-				}
+				var subKey = array.slice(offset+i).join('.');
+				console.log("in hash", subKey, node.tree['#']);
+				callbackList = callbackList.concat(matchingTrieNodes(subKey, node.tree['#']));
 			}
+			callbackList = callbackList.concat(node.tree['#'].value);
 		}
 		if (offset === array.length-1 ) {
+			//console.log('terminating label...');
+			//console.log([node]);
 			if (_.has(node.tree, label)) {
-				callbackList.concat(node.tree[label].value);
+				callbackList = callbackList.concat(node.tree[label].value);
 			}
 			if (_.has(node.tree, '*')) {
-				callbackList.concat(node.tree['*'].value);
+				callbackList = callbackList.concat(node.tree['*'].value);
 			}
 			if (_.has(node.tree, '#')) {
-				callbackList.concat(node.tree['#'].value);
+				callbackList = callbackList.concat(node.tree['#'].value);
 			}
-
+			return undefined;
 		} else {
 			return node.tree[label];
 		}
 	}, Trie);
+	console.log(callbackList);
 	return callbackList;
+}
+
+KnotConn.prototype.trigger = function(key, content) {
+	var callbacks = matchingTrieNodes(key, this.eventHandlers);
+	_.map(callbacks, function(callback) {
+		callback(content);
+	});	
 }
 
 KnotConn.prototype._messageHandler = function(event) {
