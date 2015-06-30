@@ -30,7 +30,6 @@ $.fn.knotChat = function (options) {
 	return $(this).each(function() {
 		$(this).append($(markup(options)));
 		$(this).find('.'+options.buttonClass).on('click', function() {
-			alert("Clicked!");
 		});
 	});
 };
