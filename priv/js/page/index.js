@@ -2,7 +2,8 @@
 'use strict';
 
 $(document).ready(function(){
-	$('#testcontent').knotChat();
+        var channel = new knotConn({url:'/ws/'});
+	$('#testcontent').knotChat({channel: channel});
 });
 
 }());
