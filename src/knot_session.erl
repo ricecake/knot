@@ -90,6 +90,13 @@ connected({<<"disconnect">>, _Data}, State) ->
 connected({direct, Recipient, Event}, #{ id := Id } = State) ->
 	notify(Recipient, signal, {Id, Event}),
 	{next_state, connected, State};
+connected({control, orphaned}, State) ->
+	{next_state, orphaned, State, 15000};
+connected({<<"join-channel">>, #{ <<"channel">> := ChannelId }}, #{ id := Id, socket := Socket } = State) ->
+	{ok, NewState}     = knot_storage_srv:joinChannel(ChannelId, State),
+	knot_storage_srv:sendChannel(ChannelId, signal, {<<"connected">>, #{ sessionid => Id }}),
+	knot_msg_handler:send(Socket, roster, knot_storage_srv:channelRoster(ChannelId)),
+	{next_state, connected, NewState};
 connected(Event, #{ channel := Channel, id := Id } = State) ->
 	knot_storage_srv:sendChannel(Channel, signal, {Id, Event}),
 	{next_state, connected, State}.
@@ -97,18 +104,6 @@ connected(Event, #{ channel := Channel, id := Id } = State) ->
 connected(_Event, _From, State) ->
 	{reply, ok, connected, State}.
 
-ready({control, orphaned}, State) ->
-	{next_state, orphaned, State, 15000};
-ready({<<"join-channel">>, #{ <<"channel">> := ChannelId }}, #{ id := Id, socket := Socket } = State) ->
-	{ok, NewState}     = knot_storage_srv:joinChannel(ChannelId, State),
-	knot_storage_srv:sendChannel(ChannelId, signal, {<<"connected">>, #{ sessionid => Id }}),
-	knot_msg_handler:send(Socket, roster, knot_storage_srv:channelRoster(ChannelId)),
-	{next_state, connected, NewState};
-ready(_Event, State) ->
-	{next_state, ready, State}.
-
-ready(_Event, _From, State) ->
-	{reply, ok, ready, State}.
 
 %% ------------------------------------------------------------------
 %% All state callbacks
