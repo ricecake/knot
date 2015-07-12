@@ -84,9 +84,6 @@ connected({control, hangup}, #{ channel := Channel, socket := Socket, id := Id }
 connected({control, orphaned}, #{ channel := Channel, id := Id } = State) ->
 	knot_storage_srv:sendChannel(Channel, signal, {<<"interrupted">>, #{ sessionid => Id }}),
 	{next_state, orphaned, State, 15000};
-connected({<<"disconnect">>, _Data}, State) ->
-	notify(self(), control, hangup),
-	{next_state, connected, State};
 connected({direct, Recipient, Event}, #{ id := Id } = State) ->
 	notify(Recipient, signal, {Id, Event}),
 	{next_state, connected, State};
