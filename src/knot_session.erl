@@ -21,8 +21,7 @@
 
 -export([
 	orphaned/2, orphaned/3,
-	connected/2, connected/3,
-	ready/2, ready/3
+	connected/2, connected/3
 ]).
 
 %% ------------------------------------------------------------------
@@ -53,11 +52,11 @@ inform(Session, Type, Message) when is_pid(Session) ->
 %% gen_fsm Function Definitions
 %% ------------------------------------------------------------------
 
-init(#{socket := Socket, id := Id } = Args) ->
+init(#{sockets := [Socket], id := Id } = Args) ->
 	monitor(process, Socket),
-	{ok, State} = storeRow(Args),
+	{ok, State} = storeRow(Args#{ channel => [] }),
 	knot_msg_handler:send(Socket, <<"session-data">>, #{ sessionid => Id }),
-	{ok, ready, State}.
+	{ok, connected, State}.
 
 orphaned(timeout, State) ->
 	{stop, normal, State};
@@ -66,48 +65,50 @@ orphaned(_Event, State) ->
 
 orphaned({bind, {Socket, Data}}, _From, #{ id := Id, meta := Meta } = State) ->
 	monitor(process, Socket),
-	{ok, NewState} = storeRow(State#{ socket := Socket, meta := mapMerge(Meta, Data) }),
+	{ok, NewState} = storeRow(State#{ sockets := [Socket], meta := mapMerge(Meta, Data) }),
 	knot_msg_handler:send(Socket, <<"session-data">>, #{ sessionid => Id }),
-	{reply, ok, ready, NewState}.
+	{reply, ok, connected, NewState}.
 
-connected({signal, {Type, Data}}, #{ socket := Socket } = State) ->
-	knot_msg_handler:send(Socket, Type, Data),
+
+connected({signal, {Type, Data}}, #{ sockets := Sockets } = State) ->
+	[knot_msg_handler:send(Socket, Type, Data) || Socket <- Sockets],
 	{next_state, connected, State};
-connected({signal, From, {Type, Data}}, #{ socket := Socket } = State) ->
-	knot_msg_handler:send(Socket, Type, Data, #{ from => From }),
+connected({signal, From, {Type, Data}}, #{ sockets := Sockets } = State) ->
+	[knot_msg_handler:send(Socket, Type, Data, #{ from => From }) || Socket <- Sockets],
 	{next_state, connected, State};
-connected({control, hangup}, #{ channel := Channel, socket := Socket, id := Id } = State) ->
-	knot_msg_handler:send(Socket, hangup, #{}),
-	knot_storage_srv:sendChannel(Channel, signal, {<<"disconnected">>, #{ sessionid => Id }}),
-	{ok, UpdatedState} = knot_storage_srv:leaveChannel(Channel, State),
-	{next_state, ready, UpdatedState};
-connected({control, orphaned}, #{ channel := Channel, id := Id } = State) ->
-	knot_storage_srv:sendChannel(Channel, signal, {<<"interrupted">>, #{ sessionid => Id }}),
+connected({control, socket_close}, #{ channel := Channel, id := Id, sockets := []} = State) ->
 	{next_state, orphaned, State, 15000};
+connected({control, socket_close}, State) ->
+	{next_state, connected, State};
 connected({direct, Recipient, Event}, #{ id := Id } = State) ->
 	notify(Recipient, signal, {Id, Event}),
 	{next_state, connected, State};
-connected({control, orphaned}, State) ->
-	{next_state, orphaned, State, 15000};
-connected({<<"join-channel">>, #{ <<"channel">> := ChannelId }}, #{ id := Id, socket := Socket } = State) ->
+connected({<<"join-channel">>, #{ <<"channel">> := ChannelId }}, #{ id := Id, sockets := Sockets } = State) ->
 	{ok, NewState}     = knot_storage_srv:joinChannel(ChannelId, State),
 	knot_storage_srv:sendChannel(ChannelId, signal, {<<"connected">>, #{ sessionid => Id }}),
-	knot_msg_handler:send(Socket, roster, knot_storage_srv:channelRoster(ChannelId)),
+	[knot_msg_handler:send(Socket, roster, knot_storage_srv:channelRoster(ChannelId)) || Socket <- Sockets],
 	{next_state, connected, NewState};
-connected(Event, #{ channel := Channel, id := Id } = State) ->
-	knot_storage_srv:sendChannel(Channel, signal, {Id, Event}),
+connected(Event, #{ channel := Channels, id := Id } = State) ->
+	[knot_storage_srv:sendChannel(Channel, signal, {Id, Event}) || Channel <- Channels],
+	{next_state, connected, State};
+connected(_Event, State) ->
 	{next_state, connected, State}.
 
+connected({bind, {Socket, Data}}, _From, #{ id := Id, meta := Meta, sockets := Sockets } = State) ->
+	monitor(process, Socket),
+	{ok, NewState} = storeRow(State#{ sockets := lists:umerge([Socket], Sockets), meta := mapMerge(Meta, Data) }),
+	knot_msg_handler:send(Socket, <<"session-data">>, #{ sessionid => Id }),
+	io:format("~p~n", [NewState]),
+	{reply, ok, connected, NewState};
 connected(_Event, _From, State) ->
 	{reply, ok, connected, State}.
-
 
 %% ------------------------------------------------------------------
 %% All state callbacks
 %% ------------------------------------------------------------------
 
-handle_event({Type, Data}, StateName, #{socket := Socket } = State) ->
-	knot_msg_handler:send(Socket, Type, Data),
+handle_event({Type, Data}, StateName, #{sockets := Sockets } = State) ->
+	[knot_msg_handler:send(Socket, Type, Data) || Socket <- Sockets],
 	{next_state, StateName, State};
 handle_event(_Event, StateName, State) ->
 	{next_state, StateName, State}.
@@ -115,9 +116,9 @@ handle_event(_Event, StateName, State) ->
 handle_sync_event(_Event, _From, StateName, State) ->
     {reply, ok, StateName, State}.
 
-handle_info({'DOWN', _Ref, _Type, Socket, _Exit}, StateName, #{socket := Socket} = State) ->
-	notify(self(), control, orphaned),
-	{next_state, StateName, State};
+handle_info({'DOWN', _Ref, _Type, Socket, _Exit}, StateName, #{sockets := Sockets } = State) ->
+	notify(self(), control, socket_close),
+	{next_state, StateName, State#{ sockets := lists:delete(Socket, Sockets) }};
 handle_info(_Info, StateName, State) ->
 	{next_state, StateName, State}.
 
