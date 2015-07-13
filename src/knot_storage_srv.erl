@@ -30,7 +30,6 @@ start_link() ->
 
 storeSession(SessionId, Pid, Meta) ->
 	true = ets:insert(session, {SessionId, Pid, Meta}),
-	ok.
 
 findSession(SessionId) ->
 	case ets:lookup(session, SessionId) of
@@ -40,13 +39,13 @@ findSession(SessionId) ->
 
 deleteSession(SessionId) -> ets:delete(session, SessionId).
 
-joinChannel(Channel, #{ id := Id } = SessionData) ->
+joinChannel(Channel, #{ id := Id, channel := Channels } = SessionData) ->
 	true = ets:insert(channel, {Channel, Id, self()}),
-	{ok, SessionData#{channel => Channel}}.
+	{ok, SessionData#{channel => lists:umerge([Channel], Channels)}}.
 
-leaveChannel(Channel, #{ id := Id } = SessionData) ->
+leaveChannel(Channel, #{ id := Id, channel := Channels } = SessionData) ->
 	true = ets:match_delete(channel, {Channel, Id, '_'}),
-	{ok, maps:without([channel], SessionData)}.
+	{ok, SessionData#{channel => lists:delete(Channel, Channels)}}.
 
 sendChannel(Channel, Type, Message) ->
 	[ knot_session:notify(Pid, Type, Message) ||
