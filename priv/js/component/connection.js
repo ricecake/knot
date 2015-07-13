@@ -94,12 +94,7 @@ KnotConn.prototype._messageHandler = function(event) {
 	var decoded = JSON.parse(event.data);
 	type = decoded.type;
 	content = decoded.content;
-
-	var callbacks = matchingTrieNodes(type, this.eventHandlers);
-
-	_.map(callbacks, function(callback) {
-		callback(content);
-	});
+	this.trigger(type, content);
 }
 
 KnotConn.prototype.send = function(key, content) {
