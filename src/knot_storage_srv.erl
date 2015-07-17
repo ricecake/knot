@@ -51,7 +51,7 @@ sendChannel(Channel, Type, Message) ->
 	[ knot_session:notify(Pid, Type, Message) ||
 		Pid <- ets:select(channel, [{
 			{Channel,'_','$1'},
-			[{'=/=', '$1', self()}],
+			[],
 			['$1']
 		}])
 	],
