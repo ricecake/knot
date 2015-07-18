@@ -61,7 +61,7 @@ init(#{sockets := [Socket], id := Id } = Args) ->
 orphaned(timeout, State) ->
 	{stop, normal, State};
 orphaned(_Event, State) ->
-	{next_state, orphaned, State, 15000}.
+	{next_state, orphaned, State, 60000}.
 
 orphaned({bind, {Socket, Data}}, _From, #{ id := Id, meta := Meta } = State) ->
 	monitor(process, Socket),
@@ -77,7 +77,7 @@ connected({signal, From, {Type, Data}}, #{ sockets := Sockets } = State) ->
 	[knot_msg_handler:send(Socket, Type, Data, #{ from => From }) || Socket <- Sockets],
 	{next_state, connected, State};
 connected({control, socket_close}, #{ channel := Channel, id := Id, sockets := []} = State) ->
-	{next_state, orphaned, State, 15000};
+	{next_state, orphaned, State, 60000};
 connected({control, socket_close}, State) ->
 	{next_state, connected, State};
 connected({direct, Recipient, Event}, #{ id := Id } = State) ->
