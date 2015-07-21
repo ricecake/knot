@@ -22,14 +22,15 @@ var defaults = {
 	inputSectionClass: 'knot-user-input',
 	inputClass: 'knot-chat-input',
 	buttonClass: 'knot-chat-send-button',
-	buttonText: 'Send'
+	buttonText: 'Send',
+	channel: 'lobby'
 };
 
 $.fn.knotChat = function (options) {
 	options = $.extend({}, defaults, options);
 	return $(this).each(function() {
 		$(this).append($(markup(options)));
-		options.channel.send('join-channel', { channel: 'mainpage'});
+		options.channel.send('join-channel', { channel: options.channel });
 		$(this).find('.'+options.buttonClass).on('click', function() {
 		});
 	});
