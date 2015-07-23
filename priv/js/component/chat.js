@@ -4,6 +4,9 @@
 function markup(options) {
 	return [
 		"<div class='",options.chatClass, "'>",
+			"<div class='",options.headerClass, "'>",
+				options.channel,
+			"</div>",
 			"<ul class='",options.dialogClass, "'></ul>",
 			"<div class='",options.inputSectionClass, "'>",
 				"<input type='text' class='",options.inputClass,"'></input>",
