@@ -1,22 +1,20 @@
-;(function($){
+;(function($, _){
 'use strict';
 
-function markup(options) {
-	return [
-		"<div class='",options.chatClass, "'>",
-			"<div class='",options.headerClass, "'>",
-				options.channel,
-			"</div>",
-			"<ul class='",options.dialogClass, "'></ul>",
-			"<div class='",options.inputSectionClass, "'>",
-				"<input type='text' class='",options.inputClass,"'></input>",
-				"<button class='",options.buttonClass,"'>",
-					options.buttonText,
-				"</button>",
-			"</div>",
-		"</div>"
-	].join('');
-};
+var containerMarkup = _.template(
+"<div class='<%= chatClass %>'>
+	<div class='<%= headerClass %>'>
+		<%= channel %>
+	</div>
+	<ul class='<%= dialogClass %>'></ul>
+	<div class='<%= inputSectionClass %>'>
+		<input type='text' class='<%= inputClass %>'></input>
+		<button class='<%= buttonClass %>'>
+			<%= buttonText %>
+		</button>
+	</div>
+</div>"
+);
 
 var defaults = {
 	chatClass: 'knot-chat-window',
@@ -32,11 +30,11 @@ var defaults = {
 $.fn.knotChat = function (options) {
 	options = $.extend({}, defaults, options);
 	return $(this).each(function() {
-		$(this).append($(markup(options)));
+		$(this).append($(containerMarkup(options)));
 		options.connection.send('join-channel', { channel: options.channel });
 		$(this).find('.'+options.buttonClass).on('click', function() {
 		});
 	});
 };
 
-}(jQuery));
+}(jQuery, _));
