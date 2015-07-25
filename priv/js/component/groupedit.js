@@ -1,4 +1,4 @@
-;(function($){
+;(function($, _){
 'use strict';
 
 var defaults = {
@@ -12,4 +12,4 @@ $.fn.knotGroupEdit = function (options) {
 	});
 };
 
-}(jQuery));
+}(jQuery, _));
