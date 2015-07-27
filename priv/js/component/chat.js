@@ -2,18 +2,18 @@
 'use strict';
 
 var containerMarkup = _.template(
-"<div class='<%= chatClass %>'>
-	<div class='<%= headerClass %>'>
-		<%= channel %>
-	</div>
-	<ul class='<%= dialogClass %>'></ul>
-	<div class='<%= inputSectionClass %>'>
-		<input type='text' class='<%= inputClass %>'></input>
-		<button class='<%= buttonClass %>'>
-			<%= buttonText %>
-		</button>
-	</div>
-</div>"
+"<div class='<%= chatClass %>'>"+
+	"<div class='<%= headerClass %>'>"+
+		"<%= channel %>"+
+	"</div>"+
+	"<ul class='<%= dialogClass %>'></ul>"+
+	"<div class='<%= inputSectionClass %>'>"+
+		"<input type='text' class='<%= inputClass %>'></input>"+
+		"<button class='<%= buttonClass %>'>"+
+			"<%= buttonText %>"+
+		"</button>"+
+	"</div>"+
+"</div>"
 );
 
 var defaults = {
