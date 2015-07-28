@@ -1,10 +1,6 @@
-;(function($){
+;(function($,_){
 'use strict';
-
-function markup(options) {
-	return [
-	].join('');
-};
+var containerMarkup = _.template("");
 
 var defaults = {
 };
@@ -16,4 +12,4 @@ $.fn.knotVideoChat = function (options) {
 	});
 };
 
-}(jQuery));
+}(jQuery, _));
