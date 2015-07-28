@@ -8,7 +8,7 @@ var defaults = {
 $.fn.knotVideoChat = function (options) {
 	options = $.extend({}, defaults, options);
 	return $(this).each(function() {
-		$(this).append($(markup(options)));
+		$(this).append($(containerMarkup(options)));
 	});
 };
 
