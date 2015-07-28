@@ -1,10 +1,7 @@
-;(function($){
+;(function($,_){
 'use strict';
 
-function markup(options) {
-	return [
-	].join('');
-};
+var containerMarkup = _.template("");
 
 var defaults = {
 };
@@ -12,8 +9,8 @@ var defaults = {
 $.fn.knotWhiteBoard = function (options) {
 	options = $.extend({}, defaults, options);
 	return $(this).each(function() {
-		$(this).append($(markup(options)));
+		$(this).append($(containerMarkup(options)));
 	});
 };
 
-}(jQuery));
+}(jQuery,_));
