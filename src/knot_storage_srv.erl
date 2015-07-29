@@ -11,7 +11,8 @@
 	storeSession/3,
 	findSession/1, deleteSession/1,
 	joinChannel/2, leaveChannel/2,
-	sendChannel/3, channelRoster/1
+	sendChannel/3, channelRoster/1,
+	sendChannel/4
 ]).
 
 %% ------------------------------------------------------------------
@@ -40,16 +41,19 @@ findSession(SessionId) ->
 
 deleteSession(SessionId) -> ets:delete(session, SessionId).
 
-joinChannel(Channel, #{ id := Id, channel := Channels } = SessionData) ->
+joinChannel(Channel, #{ id := Id } = SessionData) ->
 	true = ets:insert(channel, {Channel, Id, self()}),
-	{ok, SessionData#{channel => lists:umerge([Channel], Channels)}}.
+	{ok, SessionData#{channel => Channel}}.
 
-leaveChannel(Channel, #{ id := Id, channel := Channels } = SessionData) ->
+leaveChannel(Channel, #{ id := Id } = SessionData) ->
 	true = ets:match_delete(channel, {Channel, Id, '_'}),
-	{ok, SessionData#{channel => lists:delete(Channel, Channels)}}.
+	{ok, maps:without([channel], SessionData)}.
 
 sendChannel(Channel, Type, Message) ->
-	[ knot_session:notify(Pid, Type, Message) ||
+	sendChannel(Channel, undefined, Type, Message).
+
+sendChannel(Channel, From, Type, Message) ->
+	[ knot_session:notify(Pid, From, Type, Message) ||
 		Pid <- ets:select(channel, [{
 			{Channel,'_','$1'},
 			[],

@@ -7,7 +7,7 @@
 %% ------------------------------------------------------------------
 
 -export([
-	start_link/1, create/1, bind/2, notify/3, inform/3
+	start_link/1, create/1, bind/2, notify/3, notify/4, inform/3
 ]).
 
 %% ------------------------------------------------------------------
@@ -39,11 +39,16 @@ create(Meta) ->
 
 bind(Pid, Meta) -> gen_fsm:sync_send_event(Pid, {bind, {self(), Meta}}).
 
-notify(Session, Type, Message) when is_pid(Session) ->
+notify(Session, Type, Message) ->
+	notify(Session, undefined, Type, Message).
+
+notify(Session, undefined, Type, Message) when is_pid(Session) ->
 	gen_fsm:send_event(Session, {Type, Message});
-notify(Session, Type, Message) when is_binary(Session) ->
+notify(Session, From, Type, Message) when is_pid(Session) ->
+	gen_fsm:send_event(Session, {Type, From, Message});
+notify(Session, From, Type, Message) when is_binary(Session) ->
 	{ok, {Session, Pid}} = knot_storage_srv:findSession(Session),
-	notify(Pid, Type, Message).
+	notify(Pid, From, Type, Message).
 
 inform(Session, Type, Message) when is_pid(Session) ->
 	gen_fsm:sync_send_event(Session, {Type, Message}).
@@ -76,7 +81,7 @@ connected({signal, {Type, Data}}, #{ sockets := Sockets } = State) ->
 connected({signal, From, {Type, Data}}, #{ sockets := Sockets } = State) ->
 	[knot_msg_handler:send(Socket, Type, Data, #{ from => From }) || Socket <- Sockets],
 	{next_state, connected, State};
-connected({control, socket_close}, #{ channel := Channel, id := Id, sockets := []} = State) ->
+connected({control, socket_close}, #{ sockets := []} = State) ->
 	{next_state, orphaned, State, 60000};
 connected({control, socket_close}, State) ->
 	{next_state, connected, State};
@@ -88,8 +93,8 @@ connected({<<"join-channel">>, #{ <<"channel">> := ChannelId }}, #{ id := Id, so
 	knot_storage_srv:sendChannel(ChannelId, signal, {<<"connected">>, #{ sessionid => Id }}),
 	[knot_msg_handler:send(Socket, roster, knot_storage_srv:channelRoster(ChannelId)) || Socket <- Sockets],
 	{next_state, connected, NewState};
-connected(Event, #{ channel := Channels, id := Id } = State) ->
-	[knot_storage_srv:sendChannel(Channel, signal, {Id, Event}) || Channel <- Channels],
+connected(Event, #{ channel := Channel, id := Id } = State) ->
+	ok = knot_storage_srv:sendChannel(Channel, Id, signal, Event),
 	{next_state, connected, State};
 connected(_Event, State) ->
 	{next_state, connected, State}.
@@ -98,7 +103,6 @@ connected({bind, {Socket, Data}}, _From, #{ id := Id, meta := Meta, sockets := S
 	monitor(process, Socket),
 	{ok, NewState} = storeRow(State#{ sockets := lists:umerge([Socket], Sockets), meta := mapMerge(Meta, Data) }),
 	knot_msg_handler:send(Socket, <<"session-data">>, #{ sessionid => Id }),
-	io:format("~p~n", [NewState]),
 	{reply, ok, connected, NewState};
 connected(_Event, _From, State) ->
 	{reply, ok, connected, State}.

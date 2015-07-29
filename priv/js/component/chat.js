@@ -37,17 +37,18 @@ $.fn.knotChat = function (options) {
 		var that = this;
 		$(this).append($(containerMarkup(options)));
 		options.connection.addEventHandlers({
-			'#': function(key, content){
+			'chat.message': function(key, content){
 				console.log(key, content);
 				$(that)
 				.find('.'+options.dialogClass)
-				.append($(messageMarkup($.extend({
-					message: JSON.stringify([key, content])
-				}, defaults))));
+				.append($(messageMarkup($.extend({}, content, options))));
 			}
 		});
 		options.connection.send('join-channel', { channel: options.channel });
 		$(this).find('.'+options.buttonClass).on('click', function() {
+			options.connection.send('chat.message',
+				{ message: $(that).find('.'+options.inputClass)[0].value }
+			);
 		});
 	});
 };
