@@ -21,7 +21,7 @@ start_link() ->
 create(Id, Meta) ->
 	supervisor:start_child(?MODULE, [#{
 		id => Id,
-		socket => self(),
+		sockets => [self()],
 		meta => Meta
 	}]).
 

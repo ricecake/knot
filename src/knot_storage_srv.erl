@@ -30,6 +30,7 @@ start_link() ->
 
 storeSession(SessionId, Pid, Meta) ->
 	true = ets:insert(session, {SessionId, Pid, Meta}),
+	ok.
 
 findSession(SessionId) ->
 	case ets:lookup(session, SessionId) of
