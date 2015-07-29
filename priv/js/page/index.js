@@ -2,8 +2,12 @@
 'use strict';
 
 $(document).ready(function(){
-        var connection = new knotConn({ url:'/ws/' });
-	$('#testcontent').knotChat({ connection: connection, channel: 'mainpage' });
+        var connection = new KnotConn({
+		url: 'ws',
+		onOpen: function() {
+			$('#testcontent').knotChat({ connection: connection, channel: 'mainpage' });
+		}
+	});
 });
 
 }());

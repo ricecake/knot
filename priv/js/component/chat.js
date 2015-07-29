@@ -23,6 +23,7 @@ var defaults = {
 	inputSectionClass: 'knot-user-input',
 	inputClass: 'knot-chat-input',
 	buttonClass: 'knot-chat-send-button',
+	headerClass: 'knot-chat-header',
 	buttonText: 'Send',
 	channel: 'lobby'
 };

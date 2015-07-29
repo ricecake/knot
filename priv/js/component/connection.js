@@ -27,9 +27,11 @@ var KnotConn = function (options) {
 	options = _.extend({}, defaults, options);
 	this.eventHandlers = { value: [], tree: {} };
 	this.addEventHandlers(options.eventHandlers);
-	var ws = this.WebSocket = new WebSocket(options.url);
-	ws.onopen = options.onOpen;
-	ws.onmessage = this._messageHandler.bind(this);
+	var websocketUrl = Knot.Util.url(options.url);
+	this.WebSocket = new WebSocket(websocketUrl);
+	this.WebSocket.onopen = options.onOpen;
+	this.WebSocket.onmessage = this._messageHandler.bind(this);
+	return this;
 };
 
 KnotConn.prototype.addEventHandlers = function(Handlers) {
