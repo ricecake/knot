@@ -87,7 +87,7 @@ function matchingTrieNodes(Key, Trie) {
 KnotConn.prototype.trigger = function(key, content) {
 	var callbacks = matchingTrieNodes(key, this.eventHandlers);
 	_.map(callbacks, function(callback) {
-		callback(content);
+		callback(key, content);
 	});
 }
 

@@ -15,6 +15,9 @@ var containerMarkup = _.template(
 	"</div>"+
 "</div>"
 );
+var messageMarkup = _.template(
+	"<li class='<%= messageClass %>'><span><%= message %></span></li>"
+);
 
 var defaults = {
 	chatClass: 'knot-chat-window',
@@ -31,7 +34,18 @@ var defaults = {
 $.fn.knotChat = function (options) {
 	options = $.extend({}, defaults, options);
 	return $(this).each(function() {
+		var that = this;
 		$(this).append($(containerMarkup(options)));
+		options.connection.addEventHandlers({
+			'#': function(key, content){
+				console.log(key, content);
+				$(that)
+				.find('.'+options.dialogClass)
+				.append($(messageMarkup($.extend({
+					message: JSON.stringify([key, content])
+				}, defaults))));
+			}
+		});
 		options.connection.send('join-channel', { channel: options.channel });
 		$(this).find('.'+options.buttonClass).on('click', function() {
 		});
