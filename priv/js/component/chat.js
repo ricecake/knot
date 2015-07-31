@@ -7,12 +7,12 @@ var containerMarkup = _.template(
 		"<%= channel %>"+
 	"</div>"+
 	"<ul class='<%= dialogClass %>'></ul>"+
-	"<div class='<%= inputSectionClass %>'>"+
+	"<form class='<%= inputSectionClass %>'>"+
 		"<input type='text' class='<%= inputClass %>'></input>"+
 		"<button class='<%= buttonClass %>'>"+
 			"<%= buttonText %>"+
 		"</button>"+
-	"</div>"+
+	"</form>"+
 "</div>"
 );
 var messageMarkup = _.template(
@@ -35,6 +35,17 @@ $.fn.knotChat = function (options) {
 	options = $.extend({}, defaults, options);
 	return $(this).each(function() {
 		var that = this;
+		var sendMessage = function() {
+			var $input = $(that).find('.'+options.inputClass)[0];
+			var message = $input.value;
+			if (message !== '') {
+				options.connection.send('chat.message',
+					{ message: message }
+				);
+				$input.value = '';
+			}
+			return false;
+		};
 		$(this).append($(containerMarkup(options)));
 		options.connection.addEventHandlers({
 			'chat.message': function(key, content){
@@ -44,12 +55,11 @@ $.fn.knotChat = function (options) {
 				.append($(messageMarkup($.extend({}, content, options))));
 			}
 		});
+		$(this).find('.'+options.inputSectionClass).on('submit', sendMessage);
+		//$(this).find('.'+options.buttonClass).on('click', sendMessage);
 		options.connection.send('join-channel', { channel: options.channel });
-		$(this).find('.'+options.buttonClass).on('click', function() {
-			options.connection.send('chat.message',
-				{ message: $(that).find('.'+options.inputClass)[0].value }
-			);
-		});
+		options.connection.send('chat.message', { message: 'test' });
+		options.connection.send('chat.message', { message: 'test more' });
 	});
 };
 
