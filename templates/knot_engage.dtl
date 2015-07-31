@@ -1,0 +1,32 @@
+{% extends "knot_main.dtl" %}
+
+{% block headExtras %}
+{{ block.super }}
+<script src="/static/js/component/chat.js"></script>
+<script src="/static/js/component/groupedit.js"></script>
+<script src="/static/js/component/videochat.js"></script>
+<script src="/static/js/component/whiteboard.js"></script>
+<script src="/static/js/page/engage.js"></script>
+{% endblock %}
+
+{% block mainContent %}
+<div class="container">
+        <div class="section">
+                <div class="row">
+                <div class="col s6">
+                <div id="knot-chat"></div>
+                </div>
+                <div class="col s6">
+                <div id="knot-edit"></div>
+                </div>
+                <div class="col s6">
+                <div id="knot-video"></div>
+                </div>
+                <div class="col s6">
+                <div id="knot-board"></div>
+                </div>
+                </div>
+        </div>
+</div>
+
+{% endblock %}

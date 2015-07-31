@@ -3,15 +3,15 @@
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 		<title>Knot - {% block title %}Collaboration And Stuff{% endblock %}</title>
-		<script src="/js/lib/jquery-2.1.1.min.js"></script>
-		<script src="/js/lib/underscore-min.js"></script>
-		<script src="/js/lib/materialize.min.js"></script>
+		<script src="/static/js/lib/jquery-2.1.1.min.js"></script>
+		<script src="/static/js/lib/underscore-min.js"></script>
+		<script src="/static/js/lib/materialize.min.js"></script>
 
-		<script src="/js/component/util.js"></script>
-		<script src="/js/component/connection.js"></script>
+		<script src="/static/js/component/util.js"></script>
+		<script src="/static/js/component/connection.js"></script>
 
-		<link   href="/css/blinkenlights.css" rel="stylesheet" type="text/css">
-		<link   href="/css/materialize.min.css" rel="stylesheet" type="text/css" media="screen,projection">
+		<link   href="/static/css/blinkenlights.css" rel="stylesheet" type="text/css">
+		<link   href="/static/css/materialize.min.css" rel="stylesheet" type="text/css" media="screen,projection">
 		{% block headExtras %}
 		{% endblock %}
 	</head>
