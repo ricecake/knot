@@ -8,7 +8,7 @@ $(document).ready(function(){
 		ready: function() {
 			if (needSetup) {
 				connection = new KnotConn({
-					url: 'ws',
+					url: '/ws/',
 					eventHandlers: {
 						'#': function(key, content) {
 							console.log(key, content);
