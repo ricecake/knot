@@ -29,8 +29,8 @@
                                         </form>
                                 </div>
                                 <div class="modal-footer">
-                                        <a href="#!" class=" modal-action modal-close waves-effect waves-red btn-flat">OH SHIT NO</a>
-                                        <a href="#!" class=" modal-action modal-close waves-effect waves-green btn-flat">LET'S DO THIS</a>
+                                        <a class="modal-action modal-close waves-effect waves-red btn-flat">OH SHIT NO</a>
+                                        <a class="confirm modal-action waves-effect waves-green btn-flat">LET'S DO THIS</a>
                                 </div>
                         </div>
                 </div>

@@ -15,12 +15,15 @@ $(document).ready(function(){
 						}
 					},
 					onOpen: function() {
+						$('.confirm').on('click', function(){
+							console.log('yay!');
+							$(this).parent().slideToggle(500);
+						});
 					}
 				});
 			}
 		},
 		complete: function() {
-			alert('gone');
 		}
 	});
 });
