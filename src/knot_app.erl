@@ -14,9 +14,9 @@ start(_StartType, _StartArgs) ->
 		{ok, Pid} ->
 			Dispatch = cowboy_router:compile([
 				{'_', [
-					{"/",           knot_page,        index},
-					{"/ws/",        knot_msg_handler, #{}},
-					%Static file handlers
+					{"/:channel",     knot_page,        engage},
+					{"/",             knot_page,        index},
+					{"/ws/",          knot_msg_handler, #{}},
 					{"/static/[...]", cowboy_static, {priv_dir, knot, "static/"}}
 				]}
 			]),
