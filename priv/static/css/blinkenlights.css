@@ -1,5 +1,5 @@
 .brand-logo {
-	background: url("/img/tknot.svg");
+	background: url("/static/img/tknot.svg");
 	background-size: contain;
 	background-repeat: no-repeat;
 	max-height:100%;
