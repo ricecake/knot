@@ -7,6 +7,19 @@
 	height: 100%;
 }
 
+.knot-dialog {
+	overflow-y: scroll;
+	max-height: 20em;
+}
+.knot-chat-message {
+        box-shadow: inset 0px 0px 5px #BBB;
+        background-color: #DFEBF6;
+        border-radius: 4px;
+        margin: 0.5em;
+        word-break: break-word;
+	padding: .5em 1em;
+}
+
 .load-spinner {
     margin: 0 auto;
     width:0;
