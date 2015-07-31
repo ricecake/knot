@@ -81,7 +81,8 @@ connected({signal, {Type, Data}}, #{ sockets := Sockets } = State) ->
 connected({signal, From, {Type, Data}}, #{ sockets := Sockets } = State) ->
 	[knot_msg_handler:send(Socket, Type, Data, #{ from => From }) || Socket <- Sockets],
 	{next_state, connected, State};
-connected({control, socket_close}, #{ sockets := []} = State) ->
+connected({control, socket_close}, #{ sockets := [], channel := Channel, id := Id} = State) ->
+	knot_storage_srv:sendChannel(Channel, signal, {<<"channel.disconnected">>, #{ sessionid => Id }}),
 	{next_state, orphaned, State, 60000};
 connected({control, socket_close}, State) ->
 	{next_state, connected, State};
@@ -89,8 +90,8 @@ connected({direct, Recipient, Event}, #{ id := Id } = State) ->
 	notify(Recipient, signal, {Id, Event}),
 	{next_state, connected, State};
 connected({<<"join-channel">>, #{ <<"channel">> := ChannelId }}, #{ id := Id, sockets := Sockets } = State) ->
-	{ok, NewState}     = knot_storage_srv:joinChannel(ChannelId, State),
-	knot_storage_srv:sendChannel(ChannelId, signal, {<<"connected">>, #{ sessionid => Id }}),
+	{ok, NewState} = knot_storage_srv:joinChannel(ChannelId, State),
+	knot_storage_srv:sendChannel(ChannelId, signal, {<<"channel.connected">>, #{ sessionid => Id }}),
 	[knot_msg_handler:send(Socket, roster, knot_storage_srv:channelRoster(ChannelId)) || Socket <- Sockets],
 	{next_state, connected, NewState};
 connected(Event, #{ channel := Channel, id := Id } = State) ->
@@ -127,6 +128,11 @@ handle_info(_Info, StateName, State) ->
 	{next_state, StateName, State}.
 
 terminate(_Reason, _StateName, #{ id := Id } = State) ->
+	ok = case maps:find(channel, State) of
+		{ok, Channel} ->
+			knot_storage_srv:sendChannel(Channel, signal, {<<"channel.shutdown">>, #{ sessionid => Id }});
+		error -> ok
+	end,
 	knot_storage_srv:leaveChannel('_', State),
 	knot_storage_srv:deleteSession(Id).
 
