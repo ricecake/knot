@@ -2,7 +2,6 @@
 
 {% block headExtras %}
 {{ block.super }}
-<script src="/static/js/component/chat.js"></script>
 <script src="/static/js/page/index.js"></script>
 {% endblock %}
 
@@ -15,7 +14,24 @@
                         <h5 class="header col s12 light">Collaboration or some shit like that.</h5>
                 </div>
                 <div class="row center">
-                        <a href="/" id="download-button" class="btn-large waves-effect waves-light orange">Get Started</a>
+                        <a id="download-button" class="btn-large waves-effect waves-light orange modal-trigger" href="#info-form">Get Started</a>
+                        <div id='info-form' class="modal">
+                                <div class="modal-content">
+                                        <form class="knot-user-info">
+                                                <div class="input-field col s6">
+                                                        <input id="nick_name" type="text" class="validate">
+                                                        <label for="nick_name">NickName</label>
+                                                </div>
+                                                <div class="input-field col s6">
+                                                        <input id="channel_name" type="text" class="validate">
+                                                        <label for="channel_name">Channel</label>
+                                                </div>
+                                        </form>
+                                </div>
+                                <div class="modal-footer">
+                                        <a href="#!" class=" modal-action modal-close waves-effect waves-green btn-flat">LET'S DO THIS</a>
+                                </div>
+                        </div>
                 </div>
         </div>
 </div>

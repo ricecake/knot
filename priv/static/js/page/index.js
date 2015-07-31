@@ -2,14 +2,22 @@
 'use strict';
 
 $(document).ready(function(){
-        var connection = new KnotConn({
-		url: 'ws',
-		eventHandlers: {
-			'#': function(key, content) {
-				console.log(key, content);
-			}
+	$('.modal-trigger').leanModal({
+		//dismissible: false,
+		ready: function() {
+			var connection = new KnotConn({
+				url: 'ws',
+				eventHandlers: {
+					'#': function(key, content) {
+						console.log(key, content);
+					}
+				},
+				onOpen: function() {
+				}
+			});
 		},
-		onOpen: function() {
+		complete: function() {
+			alert('gone');
 		}
 	});
 });
