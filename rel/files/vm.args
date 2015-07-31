@@ -1,5 +1,5 @@
 ## Name of the node
--name knot
+-sname knot
 
 ## Cookie for distributed erlang
 -setcookie knot
