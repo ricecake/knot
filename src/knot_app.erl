@@ -17,10 +17,7 @@ start(_StartType, _StartArgs) ->
 					{"/",           knot_page,        index},
 					{"/ws/",        knot_msg_handler, #{}},
 					%Static file handlers
-					{"/js/[...]",   cowboy_static, {priv_dir, knot, "js/"}},
-					{"/css/[...]",  cowboy_static, {priv_dir, knot, "css/"}},
-					{"/font/[...]", cowboy_static, {priv_dir, knot, "font/"}},
-					{"/img/[...]",  cowboy_static, {priv_dir, knot, "img/"}}
+					{"/static/[...]", cowboy_static, {priv_dir, knot, "static/"}}
 				]}
 			]),
 			{ok, _} = cowboy:start_http(http, 25, [{ip, {127,0,0,1}}, {port, 8585}],

@@ -17,9 +17,6 @@
                 <div class="row center">
                         <a href="/" id="download-button" class="btn-large waves-effect waves-light orange">Get Started</a>
                 </div>
-                <br>
-                <div class="load-spinner"></div>
-                <br><br>
         </div>
 </div>
 
