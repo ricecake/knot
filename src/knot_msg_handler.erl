@@ -64,14 +64,9 @@ bindExistingSession(Req, State, SessionId) ->
 	case knot_storage_srv:findSession(SessionId) of
 		undefined -> initializeNewSession(Req, State);
 		{ok, {SessionId, Pid}} ->
-			knot_session:bind(Pid, extractMetaInfo(Req)),
+			knot_session:bind(Pid, #{}),
 			{ok, Req, State#{ sessionid => SessionId, pid => Pid }}
 	end.
-
-extractMetaInfo(Req) ->
-	IP        = cowboy_req:header(<<"x-real-ip">>,    Req, <<"unknown">>),
-	UserAgent = cowboy_req:header(<<"user-agent">>, Req, <<"unknown">>),
-	#{ <<"User-Agent">> => UserAgent, <<"IP">> => IP }.
 
 handle_client_task(#{ <<"type">> := Type, <<"content">> := Content, <<"to">> := Recipient } , #{ pid := Pid } = State) ->
 	ok = knot_session:notify(Pid, direct, {Recipient, {Type, Content}}),
