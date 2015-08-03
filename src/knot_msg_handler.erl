@@ -56,7 +56,7 @@ initSession(Req, State) ->
 	end.
 
 initializeNewSession(Req, State) ->
-	{NewSessionId, Pid} = knot_session:create(extractMetaInfo(Req)),
+	{NewSessionId, Pid} = knot_session:create(#{}),
 	Req2 = cowboy_req:set_resp_cookie(<<"sessionid">>, NewSessionId, [{path, cowboy_req:path(Req)}], Req),
 	{ok, Req2, State#{ sessionid => NewSessionId, pid => Pid }}.
 

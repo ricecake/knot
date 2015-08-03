@@ -57,7 +57,7 @@ $.fn.knotChat = function (options) {
 		});
 		$(this).find('.'+options.inputSectionClass).on('submit', sendMessage);
 		//$(this).find('.'+options.buttonClass).on('click', sendMessage);
-		options.connection.send('join-channel', { channel: options.channel });
+		options.connection.send('session.join', { channel: options.channel });
 		options.connection.send('chat.message', { message: 'test' });
 		options.connection.send('chat.message', { message: 'test more' });
 	});

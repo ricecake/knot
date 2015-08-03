@@ -57,10 +57,10 @@ inform(Session, Type, Message) when is_pid(Session) ->
 %% gen_fsm Function Definitions
 %% ------------------------------------------------------------------
 
-init(#{sockets := [Socket], id := Id } = Args) ->
+init(#{sockets := [Socket]} = Args) ->
 	monitor(process, Socket),
 	{ok, State} = storeRow(Args#{ channel => [] }),
-	knot_msg_handler:send(Socket, <<"session-data">>, #{ sessionid => Id }),
+	knot_msg_handler:send(Socket, <<"session-data">>, maps:with([id, meta], State)),
 	{ok, connected, State}.
 
 orphaned(timeout, State) ->
@@ -68,10 +68,10 @@ orphaned(timeout, State) ->
 orphaned(_Event, State) ->
 	{next_state, orphaned, State, 60000}.
 
-orphaned({bind, {Socket, Data}}, _From, #{ id := Id, meta := Meta } = State) ->
+orphaned({bind, {Socket, Data}}, _From, #{ meta := Meta } = State) ->
 	monitor(process, Socket),
 	{ok, NewState} = storeRow(State#{ sockets := [Socket], meta := mapMerge(Meta, Data) }),
-	knot_msg_handler:send(Socket, <<"session-data">>, #{ sessionid => Id }),
+	knot_msg_handler:send(Socket, <<"session.data">>, maps:with([id, meta], NewState)),
 	{reply, ok, connected, NewState}.
 
 
@@ -81,18 +81,26 @@ connected({signal, {Type, Data}}, #{ sockets := Sockets } = State) ->
 connected({signal, From, {Type, Data}}, #{ sockets := Sockets } = State) ->
 	[knot_msg_handler:send(Socket, Type, Data, #{ from => From }) || Socket <- Sockets],
 	{next_state, connected, State};
-connected({control, socket_close}, #{ sockets := [], channel := Channel, id := Id} = State) ->
-	knot_storage_srv:sendChannel(Channel, signal, {<<"channel.disconnected">>, #{ sessionid => Id }}),
+connected({control, socket_close}, #{ sockets := [], channel := Channel } = State) ->
+	knot_storage_srv:sendChannel(Channel, signal, {<<"channel.disconnected">>, maps:with([id, meta], State)}),
 	{next_state, orphaned, State, 60000};
 connected({control, socket_close}, State) ->
 	{next_state, connected, State};
 connected({direct, Recipient, Event}, #{ id := Id } = State) ->
 	notify(Recipient, signal, {Id, Event}),
 	{next_state, connected, State};
-connected({<<"join-channel">>, #{ <<"channel">> := ChannelId }}, #{ id := Id, sockets := Sockets } = State) ->
+connected({<<"session.data.update">>, MetaData}, #{ meta := Data } = State) ->
+	{ok, NewState} = storeRow(State#{ meta := mapMerge(MetaData, Data) }),
+	ok = case maps:find(channel, NewState) of
+		{ok, Channel} ->
+			knot_storage_srv:sendChannel(Channel, signal, {<<"session.data.changed">>, maps:with([id, meta], NewState)});
+		error -> ok
+	end,
+	{next_state, connected, NewState};
+connected({<<"session.join">>, #{ <<"channel">> := ChannelId }}, #{ sockets := Sockets } = State) ->
 	{ok, NewState} = knot_storage_srv:joinChannel(ChannelId, State),
-	knot_storage_srv:sendChannel(ChannelId, signal, {<<"channel.connected">>, #{ sessionid => Id }}),
-	[knot_msg_handler:send(Socket, roster, knot_storage_srv:channelRoster(ChannelId)) || Socket <- Sockets],
+	knot_storage_srv:sendChannel(ChannelId, signal, {<<"channel.connected">>, maps:with([id, meta], NewState)}),
+	[knot_msg_handler:send(Socket, <<"channel.roster">>, knot_storage_srv:channelRoster(ChannelId)) || Socket <- Sockets],
 	{next_state, connected, NewState};
 connected(Event, #{ channel := Channel, id := Id } = State) ->
 	ok = knot_storage_srv:sendChannel(Channel, Id, signal, Event),
@@ -100,10 +108,10 @@ connected(Event, #{ channel := Channel, id := Id } = State) ->
 connected(_Event, State) ->
 	{next_state, connected, State}.
 
-connected({bind, {Socket, Data}}, _From, #{ id := Id, meta := Meta, sockets := Sockets } = State) ->
+connected({bind, {Socket, Data}}, _From, #{ meta := Meta, sockets := Sockets } = State) ->
 	monitor(process, Socket),
 	{ok, NewState} = storeRow(State#{ sockets := lists:umerge([Socket], Sockets), meta := mapMerge(Meta, Data) }),
-	knot_msg_handler:send(Socket, <<"session-data">>, #{ sessionid => Id }),
+	knot_msg_handler:send(Socket, <<"session.data">>, maps:with([id, meta], State)),
 	{reply, ok, connected, NewState};
 connected(_Event, _From, State) ->
 	{reply, ok, connected, State}.
