@@ -1,5 +1,7 @@
 {% extends "knot_main.dtl" %}
 
+{% block title %}{{ channel }}{% endblock %}
+
 {% block headExtras %}
 {{ block.super }}
 <script src="/static/js/component/chat.js"></script>
@@ -10,6 +12,7 @@
 {% endblock %}
 
 {% block mainContent %}
+<input id='knot-channel-name' type='hidden' value='{{ channel }}' />
 <div class="container">
         <div class="section">
                 <div class="row">

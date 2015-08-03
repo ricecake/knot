@@ -10,7 +10,10 @@ $(document).ready(function(){
 			}
 		},
 		onOpen: function() {
-			$('#knot-chat').knotChat({ connection: connection, channel: 'mainpage' });
+			$('#knot-chat').knotChat({
+				connection: connection,
+				channel: $('#knot-channel-name').val()
+			});
 		}
 	});
 });
