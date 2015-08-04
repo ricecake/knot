@@ -60,7 +60,7 @@ inform(Session, Type, Message) when is_pid(Session) ->
 init(#{sockets := [Socket]} = Args) ->
 	monitor(process, Socket),
 	{ok, State} = storeRow(Args#{ channel => [] }),
-	knot_msg_handler:send(Socket, <<"session-data">>, maps:with([id, meta], State)),
+	knot_msg_handler:send(Socket, <<"session.data">>, maps:with([id, meta], State)),
 	{ok, connected, State}.
 
 orphaned(timeout, State) ->
@@ -89,12 +89,13 @@ connected({control, socket_close}, State) ->
 connected({direct, Recipient, Event}, #{ id := Id } = State) ->
 	notify(Recipient, signal, {Id, Event}),
 	{next_state, connected, State};
-connected({<<"session.data.update">>, MetaData}, #{ meta := Data } = State) ->
+connected({<<"session.data.update">>, MetaData}, #{ meta := Data, sockets := Sockets } = State) ->
 	{ok, NewState} = storeRow(State#{ meta := mapMerge(MetaData, Data) }),
 	ok = case maps:find(channel, NewState) of
 		{ok, Channel} ->
 			knot_storage_srv:sendChannel(Channel, signal, {<<"session.data.changed">>, maps:with([id, meta], NewState)});
-		error -> ok
+		error ->
+			[knot_msg_handler:send(Socket, <<"session.data.changed">>, maps:with([id, meta], NewState)) || Socket <- Sockets]
 	end,
 	{next_state, connected, NewState};
 connected({<<"session.join">>, #{ <<"channel">> := ChannelId }}, #{ sockets := Sockets } = State) ->

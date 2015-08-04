@@ -16,11 +16,18 @@ $(document).ready(function(){
 					},
 					onOpen: function() {
 						$('.confirm').on('click', function(){
-							console.log('yay!');
-							$(this).parent().slideToggle(500);
+							connection.send('session.data.update', {
+								nickname: $('#nick_name').val()
+							});
+							$('.wait-content').slideToggle(500);
+							$('.wait-indicator').slideToggle(500);
+							setTimeout(2500, function(){
+								window.location.href = '/'+$('#channel_name').val();
+							});
 						});
 					}
 				});
+				needSetup = false;
 			}
 		},
 		complete: function() {

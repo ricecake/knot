@@ -10,9 +10,9 @@ $(document).ready(function(){
 			}
 		},
 		onOpen: function() {
+			connection.send('session.join', { channel: $('#knot-channel-name').val() });
 			$('#knot-chat').knotChat({
-				connection: connection,
-				channel: $('#knot-channel-name').val()
+				connection: connection
 			});
 		}
 	});

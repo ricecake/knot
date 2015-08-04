@@ -16,21 +16,34 @@
                 <div class="row center">
                         <a id="download-button" class="btn-large waves-effect waves-light orange modal-trigger" href="#info-form">Get Started</a>
                         <div id='info-form' class="modal">
-                                <div class="modal-content">
-                                        <form class="knot-user-info">
-                                                <div class="input-field col s6">
-                                                        <input id="nick_name" type="text" class="validate">
-                                                        <label for="nick_name">NickName</label>
-                                                </div>
-                                                <div class="input-field col s6">
-                                                        <input id="channel_name" type="text" class="validate">
-                                                        <label for="channel_name">Channel</label>
-                                                </div>
-                                        </form>
+                                <div class='wait-indicator'>
+                                        <h4>
+                                                Joining Channel...
+                                        </h4>
+                                        <div class="progress">
+                                                <div class="indeterminate"></div>
+                                        </div>
                                 </div>
-                                <div class="modal-footer">
-                                        <a class="modal-action modal-close waves-effect waves-red btn-flat">OH SHIT NO</a>
-                                        <a class="confirm modal-action waves-effect waves-green btn-flat">LET'S DO THIS</a>
+                                <div class='wait-content'>
+                                        <div class="modal-content">
+                                                <h4>
+                                                        Information
+                                                </h4>
+                                                <form class="knot-user-info">
+                                                        <div class="input-field col s6">
+                                                                <input id="nick_name" type="text" class="validate">
+                                                                <label for="nick_name">NickName</label>
+                                                        </div>
+                                                        <div class="input-field col s6">
+                                                                <input id="channel_name" type="text" class="validate">
+                                                                <label for="channel_name">Channel</label>
+                                                        </div>
+                                                </form>
+                                        </div>
+                                        <div class="modal-footer">
+                                                <a class="modal-action modal-close waves-effect waves-red btn-flat">OH SHIT NO</a>
+                                                <a class="confirm modal-action waves-effect waves-green btn-flat">LET'S DO THIS</a>
+                                        </div>
                                 </div>
                         </div>
                 </div>

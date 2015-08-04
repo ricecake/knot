@@ -4,7 +4,7 @@
 var containerMarkup = _.template(
 "<div class='<%= chatClass %>'>"+
 	"<div class='<%= headerClass %>'>"+
-		"<%= channel %>"+
+		"Chat"+
 	"</div>"+
 	"<ul class='<%= dialogClass %>'></ul>"+
 	"<form class='<%= inputSectionClass %>'>"+
@@ -27,8 +27,7 @@ var defaults = {
 	inputClass: 'knot-chat-input',
 	buttonClass: 'knot-chat-send-button',
 	headerClass: 'knot-chat-header',
-	buttonText: 'Send',
-	channel: 'lobby'
+	buttonText: 'Send'
 };
 
 $.fn.knotChat = function (options) {
@@ -49,7 +48,6 @@ $.fn.knotChat = function (options) {
 		$(this).append($(containerMarkup(options)));
 		options.connection.addEventHandlers({
 			'chat.message': function(key, content){
-				console.log(key, content);
 				$(that)
 				.find('.'+options.dialogClass)
 				.append($(messageMarkup($.extend({}, content, options))));
@@ -57,7 +55,6 @@ $.fn.knotChat = function (options) {
 		});
 		$(this).find('.'+options.inputSectionClass).on('submit', sendMessage);
 		//$(this).find('.'+options.buttonClass).on('click', sendMessage);
-		options.connection.send('session.join', { channel: options.channel });
 		options.connection.send('chat.message', { message: 'test' });
 		options.connection.send('chat.message', { message: 'test more' });
 	});
