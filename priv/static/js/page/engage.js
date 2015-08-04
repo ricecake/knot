@@ -6,7 +6,6 @@ $(document).ready(function(){
 		url: '/ws/',
 		eventHandlers: {
 			'#': function(key, content) {
-				console.log(key, content);
 			}
 		},
 		onOpen: function() {

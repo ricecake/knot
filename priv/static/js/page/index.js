@@ -11,7 +11,6 @@ $(document).ready(function(){
 					url: '/ws/',
 					eventHandlers: {
 						'#': function(key, content) {
-							console.log(key, content);
 						}
 					},
 					onOpen: function() {
@@ -21,9 +20,9 @@ $(document).ready(function(){
 							});
 							$('.wait-content').slideToggle(500);
 							$('.wait-indicator').slideToggle(500);
-							setTimeout(2500, function(){
+							setTimeout(function(){
 								window.location.href = '/'+$('#channel_name').val();
-							});
+							}, 1000);
 						});
 					}
 				});
