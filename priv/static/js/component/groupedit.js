@@ -2,7 +2,9 @@
 'use strict';
 
 var defaults = {
-	editorOptions: {}
+	editorOptions: {
+		lineNumbers: true
+	}
 };
 
 $.fn.knotGroupEdit = function (options) {

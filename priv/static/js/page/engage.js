@@ -13,6 +13,9 @@ $(document).ready(function(){
 			$('#knot-chat').knotChat({
 				connection: connection
 			});
+			$('#knot-edit').knotGroupEdit();
+			$('#knot-video').knotVideoChat();
+			$('#knot-board').knotWhiteBoard();
 		}
 	});
 });
