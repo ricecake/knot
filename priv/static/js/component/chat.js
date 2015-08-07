@@ -50,9 +50,7 @@ $.fn.knotChat = function (options) {
 		options.connection.addEventHandlers({
 			'chat.message': function(key, content){
 				dialog.append($(messageMarkup($.extend({}, content, options))));
-				dialog.find('li:last-child').show('slow', function() {
-					dialog[0].scrollTop = dialog[0].scrollHeight;
-				});
+				dialog[0].scrollTop = dialog[0].scrollHeight;
 			}
 		});
 		$(this).find('.'+options.inputSectionClass).on('submit', sendMessage);
