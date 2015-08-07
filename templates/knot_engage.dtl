@@ -2,19 +2,23 @@
 
 {% block title %}{{ channel }}{% endblock %}
 
-{% block headExtras %}
+{% block extraLib %}
 {{ block.super }}
-<script src="/static/js/lib/codemirror.js"></script>
-<script src="/static/js/lib/addon/mode/loadmode.js"></script>
+	<script src="/static/js/lib/codemirror.js"></script>
+	<script src="/static/js/lib/addon/mode/loadmode.js"></script>
+{% endblock %}
 
-<script src="/static/js/component/chat.js"></script>
-<script src="/static/js/component/groupedit.js"></script>
-<script src="/static/js/component/videochat.js"></script>
-<script src="/static/js/component/whiteboard.js"></script>
+{% block extraJs %}
+{{ block.super }}
+	<script src="/static/js/component/chat.js"></script>
+	<script src="/static/js/component/groupedit.js"></script>
+	<script src="/static/js/component/videochat.js"></script>
+	<script src="/static/js/component/whiteboard.js"></script>
+{% endblock %}
 
-<script src="/static/js/page/engage.js"></script>
-
-<link href="/static/css/codemirror.css" rel="stylesheet" type="text/css">
+{% block extraCss %}
+{{ block.super }}
+	<link href="/static/css/codemirror.css" rel="stylesheet" type="text/css">
 {% endblock %}
 
 {% block mainContent %}

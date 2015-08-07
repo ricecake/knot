@@ -1,10 +1,5 @@
 {% extends "knot_main.dtl" %}
 
-{% block headExtras %}
-{{ block.super }}
-<script src="/static/js/page/index.js"></script>
-{% endblock %}
-
 {% block mainContent %}
 <div class="section no-pad-bot" id="index-banner">
         <div class="container">
