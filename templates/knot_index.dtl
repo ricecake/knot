@@ -31,13 +31,16 @@
                                                 </h4>
                                                 <form class="knot-user-info">
                                                         <div class="input-field col s6">
-                                                                <input id="nick_name" type="text" class="validate">
+                                                                <i class="material-icons prefix">account_circle</i>
+                                                                <input id="nick_name" type="text" class="validate" required="required">
                                                                 <label for="nick_name">NickName</label>
                                                         </div>
                                                         <div class="input-field col s6">
-                                                                <input id="channel_name" type="text" class="validate">
+                                                                <i class="material-icons prefix">group_work</i>
+                                                                <input id="channel_name" type="text" class="validate" required="required">
                                                                 <label for="channel_name">Channel</label>
                                                         </div>
+                                                        <input type='submit' class='submit-shim'/>
                                                 </form>
                                         </div>
                                         <div class="modal-footer">

@@ -22,7 +22,7 @@ clean:
 	@$(REBAR) clean
 
 repl:
-	erl -pz `pwd`/deps/*/ebin -pa `pwd`/ebin -s knot
+	erl -pz `pwd`/deps/*/ebin -pa `pwd`/ebin +K true -s knot
 
 release: compile
 	@$(REBAR) generate

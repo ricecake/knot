@@ -10,6 +10,7 @@
 		<script src="/static/js/component/util.js"></script>
 		<script src="/static/js/component/connection.js"></script>
 
+		<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 		<link   href="/static/css/blinkenlights.css" rel="stylesheet" type="text/css">
 		<link   href="/static/css/materialize.min.css" rel="stylesheet" type="text/css" media="screen,projection">
 		{% block headExtras %}
@@ -19,13 +20,6 @@
 	<nav class="light-blue lighten-1" role="navigation">
 		<div class="nav-wrapper container">
 			<a id="logo-container" href="/" class="brand-logo"></a>
-			<ul class="right hide-on-med-and-down">
-				<li><a href="#">Navbar Link</a></li>
-			</ul>
-			<ul id="nav-mobile" class="side-nav">
-				<li><a href="#">Navbar Link</a></li>
-			</ul>
-			<a href="#" data-activates="nav-mobile" class="button-collapse"><i class="mdi-navigation-menu"></i></a>
 		</div>
 	</nav>
 	<body>
@@ -41,15 +35,6 @@
 						<p class="grey-text text-lighten-4">
 							This is a thing I'm making, because I've made things like it before, but not all at once.
 						</p>
-					</div>
-					<div class="col l3 s12">
-						<h5 class="white-text">Settings</h5>
-						<ul>
-							<li><a class="white-text" href="#!">Link 1</a></li>
-							<li><a class="white-text" href="#!">Link 2</a></li>
-							<li><a class="white-text" href="#!">Link 3</a></li>
-							<li><a class="white-text" href="#!">Link 4</a></li>
-						</ul>
 					</div>
 					<div class="col l3 s12">
 						<h5 class="white-text">Connect</h5>
