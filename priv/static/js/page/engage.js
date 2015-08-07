@@ -5,7 +5,8 @@ $(document).ready(function(){
         var connection = new KnotConn({
 		url: '/ws/',
 		eventHandlers: {
-			'#': function(key, content) {
+			'#': function(key, content, raw) {
+				console.log([key, content, raw]);
 			}
 		},
 		onOpen: function() {
@@ -13,9 +14,11 @@ $(document).ready(function(){
 			$('#knot-chat').knotChat({
 				connection: connection
 			});
-			$('#knot-edit').knotGroupEdit();
-			$('#knot-video').knotVideoChat();
-			$('#knot-board').knotWhiteBoard();
+			$('#knot-edit').knotGroupEdit({
+				connection: connection
+			});
+			$('#knot-video').knotVideoChat({});
+			$('#knot-board').knotWhiteBoard({});
 		}
 	});
 });
