@@ -21,7 +21,7 @@ compile-erl:
 clean:
 	@$(REBAR) clean
 
-repl:
+repl: compile
 	erl -pz `pwd`/deps/*/ebin -pa `pwd`/ebin +K true -s knot
 
 release: compile
