@@ -20,16 +20,12 @@ $.fn.knotGroupEdit = function (options) {
 				editor.doc.replaceRange(event.text.join(''), event.from, event.to);
 			}
 		});
-		editor.on('change', function(ed, event){
+		editor.on('beforeChange', function(ed, event){
 			conn.send('edit.doc.update', {
 				text: event.text,
 				from: event.from,
 				to: event.to
 			});
-			//setTimeout(function(){
-			//	console.log(editor, event);
-			//	editor.doc.replaceRange(event.text.join(''), event.from, event.to);
-			//}, 10);
 		});
 	});
 };
