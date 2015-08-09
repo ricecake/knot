@@ -1,0 +1,8 @@
+.brand-logo {
+	background: url("/static/img/tknot.svg");
+	background-size: contain;
+	background-repeat: no-repeat;
+	max-height:100%;
+	width: 100%;
+	height: 100%;
+}
