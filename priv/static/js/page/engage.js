@@ -19,6 +19,7 @@ $(document).ready(function(){
 			});
 			$('#knot-video').knotVideoChat({});
 			$('#knot-board').knotWhiteBoard({});
+			$('#knot-session').knotSession({});
 		}
 	});
 });
