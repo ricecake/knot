@@ -27,7 +27,7 @@ var KnotConn = function (options) {
 	options = _.extend({}, defaults, options);
 	this.eventHandlers = { value: [], tree: {} };
 	this.addEventHandlers(options.eventHandlers);
-	var websocketUrl = Knot.Util.url(options.url);
+	var websocketUrl = url(options.url);
 	this.WebSocket = new WebSocket(websocketUrl);
 	this.WebSocket.onopen = options.onOpen;
 	this.WebSocket.onmessage = this._messageHandler.bind(this);
@@ -106,6 +106,11 @@ KnotConn.prototype.send = function(key, content) {
 	});
 	this.WebSocket.send(message);
 	return this;
+}
+
+function url(s) {
+	var l = window.location;
+	return ((l.protocol === "https:") ? "wss://" : "ws://") + l.hostname + (((l.port != 80) && (l.port != 443)) ? ":" + l.port : "") + s;
 }
 
 window.KnotConn = KnotConn;
