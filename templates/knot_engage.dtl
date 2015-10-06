@@ -2,24 +2,13 @@
 
 {% block title %}{{ channel }}{% endblock %}
 
-{% block extraLib %}
-{{ block.super }}
-	<script src="/static/js/lib/codemirror.js"></script>
-	<script src="/static/js/lib/addon/mode/loadmode.js"></script>
-{% endblock %}
-
 {% block extraJs %}
-{{ block.super }}
 	<script src="/static/js/component/chat.js"></script>
-	<script src="/static/js/component/groupedit.js"></script>
 	<script src="/static/js/component/videochat.js"></script>
-	<script src="/static/js/component/whiteboard.js"></script>
 	<script src="/static/js/component/session.js"></script>
 {% endblock %}
 
 {% block extraCss %}
-{{ block.super }}
-	<link href="/static/css/codemirror.css" rel="stylesheet" type="text/css">
 {% endblock %}
 
 {% block mainContent %}
@@ -31,13 +20,7 @@
                 	<div id="knot-chat"></div>
                 </div>
                 <div class="col s6">
-                	<div id="knot-edit"></div>
-                </div>
-                <div class="col s6">
                 	<div id="knot-video"></div>
-                </div>
-                <div class="col s6">
-                	<div id="knot-board"></div>
                 </div>
                 <div class="col s6">
                 	<div id="knot-session"></div>
