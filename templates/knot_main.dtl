@@ -55,9 +55,6 @@
 		{% block extraLib %}
 		{% endblock %}
 
-		{% block template %}
-		{% endblock %}
-
 		<script src="/static/js/component/connection.js"></script>
 		{% block extraJs %}
 		{% endblock %}
