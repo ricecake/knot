@@ -6,7 +6,7 @@
 %% API Function Exports
 %% ------------------------------------------------------------------
 
--export([start_link/0]).
+-export([start_link/0, bind/2, send/3, process/2]).
 
 %% ------------------------------------------------------------------
 %% gen_server Function Exports
@@ -22,6 +22,9 @@
 start_link() ->
     gen_server:start_link({local, ?SERVER}, ?MODULE, [], []).
 
+bind(Session, Channel)->ok.
+send(Session, Channel, Message)->ok.
+process(Session, Message)->ok.
 
 %% ------------------------------------------------------------------
 %% gen_server Function Definitions
