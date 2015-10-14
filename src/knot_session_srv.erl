@@ -55,4 +55,8 @@ code_change(_OldVsn, State, _Extra) ->
 %% Internal Function Definitions
 %% ------------------------------------------------------------------
 
+storeRow(#{ id := Id, meta := Meta } = State) ->
+	knot_storage_srv:storeSession(Id, self(), Meta),
+	{ok, State}.
+
 mapMerge(A, B) when is_map(A), is_map(B) -> maps:from_list(lists:append(maps:to_list(A), maps:to_list(B))).
