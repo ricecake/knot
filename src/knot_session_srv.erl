@@ -20,7 +20,7 @@
 %% ------------------------------------------------------------------
 
 start_link() ->
-    gen_server:start_link({local, ?SERVER}, ?MODULE, [], []).
+    gen_server:start_link(?MODULE, [], []).
 
 bind(Session, Channel)->
     gen_server:call(Session, {bind, {self(), Channel}}).
