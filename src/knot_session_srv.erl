@@ -13,23 +13,23 @@
 %% ------------------------------------------------------------------
 
 -export([init/1, handle_call/3, handle_cast/2, handle_info/2,
-         terminate/2, code_change/3]).
+	 terminate/2, code_change/3]).
 
 %% ------------------------------------------------------------------
 %% API Function Definitions
 %% ------------------------------------------------------------------
 
 start_link(Args) ->
-    gen_server:start_link(?MODULE, Args, []).
+	gen_server:start_link(?MODULE, Args, []).
 
 bind(Session, Channel)->
-    gen_server:call(Session, {bind, {self(), Channel}}).
+	gen_server:call(Session, {bind, {self(), Channel}}).
 
 send(Session, Channel, Message)->
-    gen_server:call(Session, {send, {Channel, Message}}).
+	gen_server:call(Session, {send, {Channel, Message}}).
 
 process(Session, Channel, Message)->
-    gen_server:call(Session, {process, {Channel, Message}}).
+	gen_server:call(Session, {process, {Channel, Message}}).
 
 control(Session, Event) ->
 	gen_server:call(Session, {control, Event}).
@@ -50,13 +50,13 @@ handle_call({bind, {Socket, _Channel}}, _From, #{ sockets := Sockets } = State) 
 	knot_msg_handler:send(Socket, <<"session.data">>, maps:with([id, meta], NewState)),
 	{reply, ok, NewState}.
 handle_call(_Request, _From, State) ->
-    {reply, ok, State}.
+	{reply, ok, State}.
 
 handle_cast(_Msg, State) ->
-    {noreply, State}.
+	{noreply, State}.
 
 handle_info({'DOWN', _Ref, _Type, Socket, _Exit}, #{sockets := Sockets } = State) ->
-    {noreply, State#{ sockets := lists:delete(Socket, Sockets) }}.
+	{noreply, State#{ sockets := lists:delete(Socket, Sockets) }}.
 
 terminate(_Reason, #{ id := Id } = State) ->
 	ok = case maps:find(channel, State) of
@@ -68,7 +68,7 @@ terminate(_Reason, #{ id := Id } = State) ->
 	knot_storage_srv:deleteSession(Id).
 
 code_change(_OldVsn, State, _Extra) ->
-    {ok, State}.
+	{ok, State}.
 
 %% ------------------------------------------------------------------
 %% Internal Function Definitions
