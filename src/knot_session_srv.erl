@@ -44,6 +44,11 @@ init(#{sockets := [Socket]} = Args) ->
 	knot_msg_handler:send(Socket, <<"session.data">>, maps:with([id, meta], State)),
 	{ok, State}.
 
+handle_call({bind, {Socket, _Channel}}, _From, #{ sockets := Sockets } = State) ->
+	monitor(process, Socket),
+	{ok, NewState} = storeRow(State#{ sockets := lists:umerge([Socket], Sockets) }),
+	knot_msg_handler:send(Socket, <<"session.data">>, maps:with([id, meta], NewState)),
+	{reply, ok, NewState}.
 handle_call(_Request, _From, State) ->
     {reply, ok, State}.
 
