@@ -26,13 +26,13 @@ bind(Session, Channel)->
 	gen_server:call(Session, {bind, {self(), Channel}}).
 
 send(Session, Channel, Message)->
-	gen_server:call(Session, {send, {Channel, Message}}).
+	gen_server:cast(Session, {send, {Channel, Message}}).
 
 process(Session, Channel, Message)->
-	gen_server:call(Session, {process, {Channel, Message}}).
+	gen_server:cast(Session, {process, {Channel, Message}}).
 
 control(Session, Event) ->
-	gen_server:call(Session, {control, Event}).
+	gen_server:cast(Session, {control, Event}).
 
 %% ------------------------------------------------------------------
 %% gen_server Function Definitions
@@ -44,7 +44,8 @@ init(#{sockets := [Socket]} = Args) ->
 	knot_msg_handler:send(Socket, <<"session.data">>, maps:with([id, meta], State)),
 	{ok, State}.
 
-handle_call({send, {Channel, Message}}, _From, State) cast       {reply, ok, State};
+handle_call({send, {Channel, Message}}, _From, State) ->
+        {reply, ok, State};
 handle_call({bind, {Socket, _Channel}}, _From, #{ sockets := Sockets } = State) ->
 	monitor(process, Socket),
 	{ok, NewState} = storeRow(State#{ sockets := lists:umerge([Socket], Sockets) }),
