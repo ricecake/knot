@@ -48,9 +48,9 @@ handle_call(_Request, _From, State) ->
 	{reply, ok, State}.
 
 handle_cast({send, {Channel, Message}}, _From, State) ->
-        {noreply, State};
+	{noreply, State};
 handle_cast({process, {Channel, Message}}, _From, State) ->
-        {noreply, State};
+	{noreply, State};
 handle_cast({bind, {Socket, _Channel}}, _From, #{ sockets := Sockets } = State) ->
 	monitor(process, Socket),
 	{ok, NewState} = storeRow(State#{ sockets := lists:umerge([Socket], Sockets) }),
