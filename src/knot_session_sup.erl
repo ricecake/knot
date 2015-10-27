@@ -3,7 +3,7 @@
 -behaviour(supervisor).
 
 %% API
--export([start_link/0, create/3]).
+-export([start_link/0, create/2]).
 
 %% Supervisor callbacks
 -export([init/1]).
@@ -18,8 +18,8 @@
 start_link() ->
     supervisor:start_link({local, ?MODULE}, ?MODULE, []).
 
-create(Id, Meta, Channel) ->
-	supervisor:start_child(?MODULE, [{self(), Channel, #{
+create(Id, Meta) ->
+	supervisor:start_child(?MODULE, [{self(), #{
 		id => Id,
 		meta => Meta
 	}}]).

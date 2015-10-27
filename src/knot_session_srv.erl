@@ -6,7 +6,7 @@
 %% API Function Exports
 %% ------------------------------------------------------------------
 
--export([start_link/1, bind/2, send/3, process/3, control/2]).
+-export([start_link/1, bind/1, send/3, process/3, control/2]).
 
 %% ------------------------------------------------------------------
 %% gen_server Function Exports
@@ -22,8 +22,8 @@
 start_link(Args) ->
 	gen_server:start_link(?MODULE, Args, []).
 
-bind(Session, Channel)->
-	gen_server:call(Session, {bind, {self(), Channel}}).
+bind(Session)->
+	gen_server:call(Session, {bind, self()}).
 
 send(Session, Channel, Message)->
 	gen_server:cast(Session, {send, {Channel, Message}}).
@@ -38,7 +38,7 @@ control(Session, Event) ->
 %% gen_server Function Definitions
 %% ------------------------------------------------------------------
 
-init({Socket, Channel, Data}) ->
+init({Socket, Data}) ->
 	[ monitor(process, Socket) || Socket <- maps:keys(SocketMap) ],
 	ChannelSockets = lists:flatten([ [ {Channel, Socket} || Channel <- Channels ] || {Socket, Channels} <- maps:to_list(SocketMap)]),
 	ChannelMap = lists:foldl(
@@ -60,7 +60,7 @@ handle_cast({send, {Channel, Message}}, State) ->
 	{noreply, State};
 handle_cast({process, {Channel, Message}}, State) ->
 	{noreply, State};
-handle_cast({bind, {Socket, _Channel}}, #{ sockets := Sockets } = State) ->
+handle_cast({bind, Socket}, #{ sockets := Sockets } = State) ->
 	monitor(process, Socket),
 	{ok, NewState} = storeRow(State#{ sockets := lists:umerge([Socket], Sockets) }),
 	knot_msg_handler:send(Socket, <<"session.data">>, maps:with([id, meta], NewState)),
