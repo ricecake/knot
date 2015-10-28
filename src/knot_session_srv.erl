@@ -39,18 +39,9 @@ control(Session, Event) ->
 %% ------------------------------------------------------------------
 
 init({Socket, Data}) ->
-	[ monitor(process, Socket) || Socket <- maps:keys(SocketMap) ],
-	ChannelSockets = lists:flatten([ [ {Channel, Socket} || Channel <- Channels ] || {Socket, Channels} <- maps:to_list(SocketMap)]),
-	ChannelMap = lists:foldl(
-		fun({Channel, Socket}, Map) ->
-			case maps:find(Channel, Map) of
-				{ok, Rest} -> Map#{Channel := [Socket | Rest]};
-				error      -> Map#{Channel => [Socket]}
-			end
-		end, #{}, ChannelSockets
-	),
-	{ok, State} = storeRow(Args#{ channels => ChannelMap }),
-	[ knot_msg_handler:send(Socket, <<"session.data">>, maps:with([id, meta], State)) || Socket <- maps:keys(SocketMap) ],
+	monitor(process, Socket),
+	{ok, State} = storeRow(Args#{ sockets => #{ Socket => [] }, channels => #{} }),
+	knot_msg_handler:send(Socket, <<"session.data">>, maps:with([id, meta], State)),
 	{ok, State}.
 
 handle_call(_Request, _From, State) ->
