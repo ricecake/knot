@@ -26,10 +26,10 @@ bind(Session)->
 	gen_server:call(Session, {bind, self()}).
 
 send(Session, Channel, Message)->
-	gen_server:cast(Session, {send, {Channel, Message}}).
+	gen_server:cast(Session, {send, {self(), Channel, Message}}).
 
 process(Session, Channel, Message)->
-	gen_server:cast(Session, {process, {Channel, Message}}).
+	gen_server:cast(Session, {process, {self(), Channel, Message}}).
 
 control(Session, Event) ->
 	gen_server:cast(Session, {control, Event}).
@@ -47,19 +47,21 @@ init({Socket, Data}) ->
 handle_call(_Request, _From, State) ->
 	{reply, ok, State}.
 
-handle_cast({send, {Channel, Message}}, State) ->
+handle_cast({send, {From, Channel, Message}}, State) ->
 	{noreply, State};
-handle_cast({process, {Channel, Message}}, State) ->
+handle_cast({process, {From, Channel, Message}}, State) ->
 	{noreply, State};
-handle_cast({bind, Socket}, #{ sockets := Sockets } = State) ->
+handle_cast({bind, Socket}, #{ sockets := SocketMap } = State) ->
 	monitor(process, Socket),
-	{ok, NewState} = storeRow(State#{ sockets := lists:umerge([Socket], Sockets) }),
+	{ok, NewState} = storeRow(State#{ sockets := SocketMap#{ Socket => [] } }),
 	knot_msg_handler:send(Socket, <<"session.data">>, maps:with([id, meta], NewState)),
 	{noreply, NewState};
 handle_cast(_Msg, State) ->
 	{noreply, State}.
 
-handle_info({'DOWN', _Ref, _Type, Socket, _Exit}, #{sockets := Sockets } = State) ->
+handle_info({'DOWN', _Ref, _Type, Socket, _Exit}, #{sockets := SocketMap } = State) ->
+	#{ Socket := Channels } = SocketMap,
+	[knot_storage_srv:sendChannel(Channel, <<"channel.disconnected">>, maps:with([id, meta], State))  || Channel <- Channels],
 	{noreply, State#{ sockets := lists:delete(Socket, Sockets) }}.
 
 terminate(_Reason, #{ id := Id } = State) ->
