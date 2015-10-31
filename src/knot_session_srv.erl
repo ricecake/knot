@@ -47,7 +47,12 @@ init({Socket, Data}) ->
 handle_call(_Request, _From, State) ->
 	{reply, ok, State}.
 
-handle_cast({send, {From, Channel, Message}}, State) ->
+handle_cast({send, {From, Channel, Message}}, #{ channels := ChannelMap } = State) ->
+	Sockets = case maps:find(Channel, ChannelMap) of
+		{ok, Found} -> Found;
+		error -> []
+	end,
+	[knot_msg_handler:send(Socket, Message) || Socket <- Sockets],
 	{noreply, State};
 handle_cast({process, {From, Channel, Message}}, State) ->
 	{noreply, State};
