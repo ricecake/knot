@@ -67,7 +67,7 @@ handle_cast(_Msg, State) ->
 handle_info({'DOWN', _Ref, _Type, Socket, _Exit}, #{sockets := SocketMap } = State) ->
 	#{ Socket := Channels } = SocketMap,
 	[knot_storage_srv:sendChannel(Channel, <<"channel.disconnected">>, maps:with([id, meta], State))  || Channel <- Channels],
-	{noreply, State#{ sockets := lists:delete(Socket, Sockets) }}.
+	{noreply, State#{ sockets := maps:without([Socket], SocketMap) }}.
 
 terminate(_Reason, #{ id := Id } = State) ->
 	ok = case maps:find(channel, State) of
