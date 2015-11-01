@@ -26,10 +26,10 @@ bind(Session)->
 	gen_server:call(Session, {bind, self()}).
 
 send(Session, Channel, Message)->
-	gen_server:cast(Session, {send, {self(), Channel, Message}}).
+	gen_server:cast(Session, {send, {Channel, Message}}).
 
 process(Session, Channel, Message)->
-	gen_server:cast(Session, {process, {self(), Channel, Message}}).
+	gen_server:cast(Session, {process, {Channel, Message}}).
 
 control(Session, Event) ->
 	gen_server:cast(Session, {control, Event}).
@@ -47,14 +47,14 @@ init({Socket, Data}) ->
 handle_call(_Request, _From, State) ->
 	{reply, ok, State}.
 
-handle_cast({send, {From, Channel, Message}}, #{ channels := ChannelMap } = State) ->
+handle_cast({send, {Channel, Message}}, #{ channels := ChannelMap } = State) ->
 	Sockets = case maps:find(Channel, ChannelMap) of
 		{ok, Found} -> Found;
 		error -> []
 	end,
 	[knot_msg_handler:send(Socket, Message) || Socket <- Sockets],
 	{noreply, State};
-handle_cast({process, {From, Channel, Message}}, State) ->
+handle_cast({process, {Channel, Message}}, State) ->
 	{noreply, State};
 handle_cast({bind, Socket}, #{ sockets := SocketMap } = State) ->
 	monitor(process, Socket),
