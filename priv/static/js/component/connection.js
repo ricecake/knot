@@ -45,6 +45,7 @@ var KnotConn = function (options) {
 };
 
 KnotConn.prototype.connect = function(websocketUrl, options) {
+	var object = this;
 	if (this.WebSocket != undefined) {
 		this.WebSocket.close();
 	}
@@ -53,7 +54,7 @@ KnotConn.prototype.connect = function(websocketUrl, options) {
 	this.WebSocket.onmessage = this._messageHandler.bind(this);
 	this.WebSocket.onclose = function(){
 		setTimeout(function(){
-			this.connect(websocketUrl, options);
+			object.connect(websocketUrl, options);
 		}, 10000);
 	};
 	return this;
@@ -139,5 +140,6 @@ function url(s) {
 	return ((l.protocol === "https:") ? "wss://" : "ws://") + l.hostname + (((l.port != 80) && (l.port != 443)) ? ":" + l.port : "") + s;
 }
 
+console.log('Returning');
 return KnotConn;
 }));
