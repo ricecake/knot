@@ -140,6 +140,5 @@ function url(s) {
 	return ((l.protocol === "https:") ? "wss://" : "ws://") + l.hostname + (((l.port != 80) && (l.port != 443)) ? ":" + l.port : "") + s;
 }
 
-console.log('Returning');
 return KnotConn;
 }));
