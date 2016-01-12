@@ -1,4 +1,12 @@
-;(function(){
+;(function(root, factory){
+	if (typeof define === 'function' && define.amd) {
+		define(['underscore'], factory);
+	} else if (typeof exports === 'object') {
+		module.exports = factory(require('underscore'));
+	} else {
+		root.KnotConn = factory(root._);
+	}
+}(this, function(_){
 'use strict';
 
 
@@ -20,7 +28,11 @@
  */
 
 var defaults = {
-	eventHandlers: {}
+	eventHandlers: {
+		'ping': function() {
+			this.send('pong', null);
+		}
+	}
 };
 
 var KnotConn = function (options) {
@@ -28,9 +40,22 @@ var KnotConn = function (options) {
 	this.eventHandlers = { value: [], tree: {} };
 	this.addEventHandlers(options.eventHandlers);
 	var websocketUrl = url(options.url);
+	this.connect(websocketUrl, options);
+	return this;
+};
+
+KnotConn.prototype.connect = function(websocketUrl, options) {
+	if (this.WebSocket != undefined) {
+		this.WebSocket.close();
+	}
 	this.WebSocket = new WebSocket(websocketUrl);
 	this.WebSocket.onopen = options.onOpen;
 	this.WebSocket.onmessage = this._messageHandler.bind(this);
+	this.WebSocket.onclose = function(){
+		setTimeout(function(){
+			this.connect(websocketUrl, options);
+		}, 10000);
+	};
 	return this;
 };
 
@@ -86,8 +111,9 @@ function matchingTrieNodes(Key, Trie) {
 
 KnotConn.prototype.trigger = function(key, content, decoded) {
 	var callbacks = matchingTrieNodes(key, this.eventHandlers);
+	var object = this;
 	_.map(callbacks, function(callback) {
-		callback(key, content, decoded);
+		callback.call(object, key, content, decoded);
 	});
 }
 
@@ -113,5 +139,5 @@ function url(s) {
 	return ((l.protocol === "https:") ? "wss://" : "ws://") + l.hostname + (((l.port != 80) && (l.port != 443)) ? ":" + l.port : "") + s;
 }
 
-window.KnotConn = KnotConn;
-}());
+return KnotConn;
+}));
