@@ -1,32 +1,23 @@
-REBAR=		./rebar
-DIALYZER=	dialyzer
+REBAR := `pwd`/rebar3
 
+all: test release
 
-.PHONY: all deps compile get-deps clean
-
-all: compile release
-
-deps: clean get-deps
-
-package: clean get-deps compile release bundle
-
-get-deps:
-	@$(REBAR) get-deps
-
-compile: compile-erl 
-
-compile-erl:
+compile:
 	@$(REBAR) compile
+
+test:
+	@$(REBAR) do xref, eunit, ct, cover
+
+test-all:
+	@$(REBAR) do xref, dialyzer, eunit, ct, cover
+
+release:
+	@$(REBAR) release
 
 clean:
 	@$(REBAR) clean
 
-repl: compile
-	erl -pz `pwd`/deps/*/ebin -pa `pwd`/ebin +K true -s knot
+shell:
+	@$(REBAR) shell
 
-release: compile
-	@$(REBAR) generate
-
-bundle: release
-	mkdir -p packages;
-	tar czf packages/knot.tar.gz -C rel knot
+.PHONY: release test all compile clean
