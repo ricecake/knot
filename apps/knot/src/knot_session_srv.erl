@@ -38,23 +38,23 @@ control(Session, Event) ->
 %% gen_server Function Definitions
 %% ------------------------------------------------------------------
 
-init({Socket, Data}) ->
+init({Socket, _Data}) ->
 	monitor(process, Socket),
-	{ok, State} = storeRow(Args#{ sockets => #{ Socket => [] }, channels => #{} }),
+	{ok, State} = storeRow(#{ sockets => #{ Socket => [] }, channels => #{} }),
 	knot_msg_handler:send(Socket, <<"session.data">>, maps:with([id, meta], State)),
 	{ok, State}.
 
 handle_call(_Request, _From, State) ->
 	{reply, ok, State}.
 
-handle_cast({send, {Channel, Message}}, #{ channels := ChannelMap } = State) ->
+handle_cast({send, {Channel, Type, Message}}, #{ channels := ChannelMap } = State) ->
 	Sockets = case maps:find(Channel, ChannelMap) of
 		{ok, Found} -> Found;
 		error -> []
 	end,
-	[knot_msg_handler:send(Socket, Message) || Socket <- Sockets],
+	[knot_msg_handler:send(Socket, Type, Message) || Socket <- Sockets],
 	{noreply, State};
-handle_cast({process, {Channel, Message}}, State) ->
+handle_cast({process, {_Channel, _Message}}, State) ->
 	{noreply, State};
 handle_cast({bind, Socket}, #{ sockets := SocketMap } = State) ->
 	monitor(process, Socket),
@@ -89,17 +89,17 @@ storeRow(#{ id := Id, meta := Meta } = State) ->
 	knot_storage_srv:storeSession(Id, self(), Meta),
 	{ok, State}.
 
-mapMerge(A, B) when is_map(A), is_map(B) -> maps:from_list(lists:append(maps:to_list(A), maps:to_list(B))).
-
-bindSocket(Socket, Channel, #{ sockets := SocketMap, channels := ChannelMap } = State) ->
-	{NewSockets, SocketData} = case maps:find(Socket, SocketMap) of
-		{ok, SData} -> {[], SData};
-		error      -> {[Socket], []}
-	end,
-	{NewChannels, ChannelData} = case maps:find(Channel, ChannelMap) of
-		{ok, CData} -> {[], CData};
-		error      -> {[Channel], []}
-	end,
-	NewSocketData  = lists:umerge([Channel], SocketData),
-	NewChannelData = lists:umerge([Socket], ChannelData),
-	{NewSockets, NewChannels, State#{ sockets := SocketMap#{ Socket => NewSocketData }, channels := ChannelMap#{ Channel => NewChannelData } }}.
+%mapMerge(A, B) when is_map(A), is_map(B) -> maps:from_list(lists:append(maps:to_list(A), maps:to_list(B))).
+%
+%bindSocket(Socket, Channel, #{ sockets := SocketMap, channels := ChannelMap } = State) ->
+%	{NewSockets, SocketData} = case maps:find(Socket, SocketMap) of
+%		{ok, SData} -> {[], SData};
+%		error      -> {[Socket], []}
+%	end,
+%	{NewChannels, ChannelData} = case maps:find(Channel, ChannelMap) of
+%		{ok, CData} -> {[], CData};
+%		error      -> {[Channel], []}
+%	end,
+%	NewSocketData  = lists:umerge([Channel], SocketData),
+%	NewChannelData = lists:umerge([Socket], ChannelData),
+%	{NewSockets, NewChannels, State#{ sockets := SocketMap#{ Socket => NewSocketData }, channels := ChannelMap#{ Channel => NewChannelData } }}.
