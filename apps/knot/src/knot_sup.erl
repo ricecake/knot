@@ -25,7 +25,5 @@ start_link() ->
 init([]) ->
 	{ok, { {one_for_one, 5, 10}, [
 		?CHILD(knot_storage_srv, worker),
-                ?CHILD(knot_mq_connection, worker),
 		?CHILD(knot_session_sup, supervisor)
 	]} }.
-
