@@ -40,7 +40,7 @@ send(Handler, Type, Message) ->
 	send(Handler, Type, Message, #{}).
 
 send(Handler, Type, Message, Base) when is_map(Base) ->
-	Handler ! {send, jiffy:encode(Base#{type => Type, content => Message })},
+	Handler ! {send, jsx:encode(Base#{type => Type, content => Message })},
 	ok.
 
 
