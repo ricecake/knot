@@ -18,9 +18,9 @@ init(Req, Opts) ->
 	{cowboy_websocket, Req2, State}.
 
 websocket_handle({text, JSON} = Data, Req, State) ->
-	Message = jiffy:decode(JSON, [return_maps]),
+	Message = jsx:decode(JSON, [return_maps]),
 	case handle_client_task(Message, State) of
-		{reply, Data, NewState} -> {reply, {text, jiffy:encode(Data)}, Req, NewState};
+		{reply, Data, NewState} -> {reply, {text, jsx:encode(Data)}, Req, NewState};
 		{ok, NewState} -> {ok, Req, NewState}
 	end;
 websocket_handle(_Frame, Req, State) ->
