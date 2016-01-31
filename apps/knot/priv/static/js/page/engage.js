@@ -10,16 +10,16 @@ $(document).ready(function(){
 			}
 		},
 		onOpen: function() {
-			connection.send('session.join', { channel: $('#knot-channel-name').val() });
-			$('#knot-chat').knotChat({
-				connection: connection
-			});
-			$('#knot-edit').knotGroupEdit({
-				connection: connection
-			});
-			$('#knot-video').knotVideoChat({});
-			$('#knot-board').knotWhiteBoard({});
-			$('#knot-session').knotSession({});
+			connection.send('knot.session.join', { channel: $('#knot-channel-name').val() });
+			//$('#knot-chat').knotChat({
+			//	connection: connection
+			//});
+			//$('#knot-edit').knotGroupEdit({
+			//	connection: connection
+			//});
+			//$('#knot-video').knotVideoChat({});
+			//$('#knot-board').knotWhiteBoard({});
+			//$('#knot-session').knotSession({});
 		}
 	});
 });

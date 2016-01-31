@@ -6,7 +6,7 @@ $(document).ready(function(){
 	var needSetup = true;
 	var forwardToChannel = function() {
 		console.log('here');
-		connection.send('session.data.update', {
+		connection.send('knot.session.data.update', {
 			nickname: $('#nick_name').val()
 		});
 		$('.wait-content').slideToggle(500);
