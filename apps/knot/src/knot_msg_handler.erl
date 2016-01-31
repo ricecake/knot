@@ -5,10 +5,6 @@
 -export([websocket_handle/3]).
 -export([websocket_info/3]).
 
-
-%% API exports
--export([send/3, send/4]).
-
 %% ===================================================================
 %% Cowboy callbacks
 %% ===================================================================
@@ -36,11 +32,8 @@ websocket_info(Message, Req, State) ->
 %% API Function Definitions
 %% ------------------------------------------------------------------
 
-send(Handler, Type, Message) ->
-	send(Handler, Type, Message, #{}).
-
-send(Handler, Type, Message, Base) when is_map(Base) ->
-	Handler ! {send, jsx:encode(Base#{type => Type, content => Message })},
+send(Handler, Message) when is_map(Message) ->
+	Handler ! {send, jsx:encode(Message)},
 	ok.
 
 
@@ -50,31 +43,30 @@ send(Handler, Type, Message, Base) when is_map(Base) ->
 
 initSession(Req, State) ->
 	#{sessionid := SessionId} = cowboy_req:match_cookies([{sessionid, [], undefined}], Req),
-	case SessionId of
+	{ok, Req2, NewState} = case SessionId of
 		undefined       -> initializeNewSession(Req, State);
 		ExistingSession -> bindExistingSession(Req, State, ExistingSession)
-	end.
+	end,
+	{ok, Req2, NewState}.
 
 initializeNewSession(Req, State) ->
-	{NewSessionId, Pid} = knot_session:create(#{}),
-	Req2 = cowboy_req:set_resp_cookie(<<"sessionid">>, NewSessionId, [{path, cowboy_req:path(Req)}], Req),
-	{ok, Req2, State#{ sessionid => NewSessionId, pid => Pid }}.
+	UUID = erlang:list_to_binary(uuid:uuid_to_string(uuid:get_v4())),
+	Req2 = cowboy_req:set_resp_cookie(<<"sessionid">>, UUID, [{path, cowboy_req:path(Req)}], Req),
+	{ok, Req2, State#{ sessionid => UUID }}.
 
 bindExistingSession(Req, State, SessionId) ->
-	case knot_storage_srv:findSession(SessionId) of
-		undefined -> initializeNewSession(Req, State);
-		{ok, {SessionId, Pid}} ->
-			knot_session:bind(Pid, #{}),
-			{ok, Req, State#{ sessionid => SessionId, pid => Pid }}
-	end.
+	{ok, Req, State#{ sessionid => SessionId }}.
 
-handle_client_task(#{ <<"type">> := Type, <<"content">> := Content, <<"to">> := Recipient } , #{ pid := Pid } = State) ->
-	ok = knot_session:notify(Pid, direct, {Recipient, {Type, Content}}),
-	{ok, State};
-handle_client_task(#{ <<"type">> := Type, <<"content">> := Content } , #{ pid := Pid } = State) ->
-	ok = knot_session:notify(Pid, Type, Content),
-	{ok, State};
-handle_client_task(#{ <<"type">> := Type } , #{ pid := Pid } = State) ->
-	ok = knot_session:notify(Pid, Type, #{}),
+handle_client_task(#{ <<"type">> := <<"knot.session.join">>, <<"content">> := #{ <<"channel">> := Channel} } = Msg, #{ sessionid := UID } = State) ->
+	pubsub:subscribe(Channel, [
+		UID,
+		<<"knot.#">>
+	], fun(Sub, _From, {_Topic, Message})->
+		send(Sub, Message)
+	end),
+	pubsub:publish(Channel, <<"knot.session.join">>, Msg#{ from => UID }),
+	{ok, State#{ channel => Channel }};
+handle_client_task(#{ <<"type">> := Type } = Msg, #{ channel := Channel, sessionid := UID } = State) ->
+	pubsub:publish(Channel, Type, Msg#{ from => UID }),
 	{ok, State};
 handle_client_task(_Message, State) -> {ok, State}.
