@@ -26,7 +26,15 @@
   {git,"https://github.com/ricecake/pubsub",
        {ref,"3868835b6d5938efc73dcfbf15c96081d42fbf69"}},
   0},
+ {<<"quickrand">>,
+  {git,"https://github.com/okeuday/quickrand.git",
+       {ref,"75a709de3ccffb0bf53989ccb2e538d230215493"}},
+  1},
  {<<"ranch">>,
   {git,"https://github.com/ninenines/ranch",
        {ref,"741bfb73ca663394ecf7a73410506d66f01985a6"}},
-  1}].
+  1},
+ {<<"uuid">>,
+  {git,"https://github.com/okeuday/uuid.git",
+       {ref,"80cd98fe28c2865711bde99d5a6e245434b1698b"}},
+  0}].
