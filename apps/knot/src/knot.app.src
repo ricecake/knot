@@ -6,7 +6,9 @@
   {applications, [
                   kernel,
                   stdlib,
-                  cowboy
+                  cowboy,
+                  pubsub,
+                  jsx
                  ]},
   {mod, { knot_app, []}},
   {env, []}
