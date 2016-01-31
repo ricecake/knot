@@ -126,11 +126,12 @@ KnotConn.prototype._messageHandler = function(event) {
 	this.trigger(type, content, decoded);
 }
 
-KnotConn.prototype.send = function(key, content) {
-	var message = JSON.stringify({
+KnotConn.prototype.send = function(key, content, extra) {
+	var data = _.extend({}, extra, {
 		'type': key,
 		'content': content
 	});
+	var message = JSON.stringify(data);
 	this.WebSocket.send(message);
 	return this;
 }
