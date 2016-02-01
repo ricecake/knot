@@ -1,4 +1,4 @@
-;(function(){
+;define(['jquery', 'KnotConn', 'materialize'], function($, KnotConn){
 'use strict';
 
 $(document).ready(function(){
@@ -41,4 +41,4 @@ $(document).ready(function(){
 	});
 });
 
-}());
+});

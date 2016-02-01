@@ -49,15 +49,11 @@
 				</div>
 			</div>
 		</footer>
-		<script src="/static/js/lib/jquery-2.1.1.min.js"></script>
-		<script src="/static/js/lib/underscore-min.js"></script>
-		<script src="/static/js/lib/materialize.min.js"></script>
-		{% block extraLib %}
-		{% endblock %}
-
-		<script src="/static/js/component/connection.js"></script>
-		{% block extraJs %}
-		{% endblock %}
-		<script src="/static/js/page/{{ page }}.js"></script>
+                <script src="/static/js/lib/require.js"></script>
+                <script>
+                        require(['/static/js/common.js'], function(common){
+                                require(['page/{{ page }}'])
+                        });
+                </script>
 	</body>
 </html>
