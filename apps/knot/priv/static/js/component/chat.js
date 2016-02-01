@@ -1,23 +1,5 @@
-;(function($, _){
+;define(['jquery', 'tpl!template/chat','tpl!template/chat-message'], function($,containerMarkup,messageMarkup){
 'use strict';
-
-var containerMarkup = _.template(
-"<div class='<%= chatClass %>'>"+
-	"<div class='<%= headerClass %>'>"+
-		"Chat"+
-	"</div>"+
-	"<ul class='<%= dialogClass %>'></ul>"+
-	"<form class='<%= inputSectionClass %>'>"+
-		"<input type='text' class='<%= inputClass %>'></input>"+
-		"<button class='<%= buttonClass %>'>"+
-			"<%= buttonText %>"+
-		"</button>"+
-	"</form>"+
-"</div>"
-);
-var messageMarkup = _.template(
-	"<li class='<%= messageClass %>'><span><%= message %></span></li>"
-);
 
 var defaults = {
 	chatClass: 'knot-chat-window',
@@ -40,7 +22,7 @@ $.fn.knotChat = function (options) {
 			var $input = that.find('.'+options.inputClass)[0];
 			var message = $input.value;
 			if (message !== '') {
-				options.connection.send('chat.message',
+				options.connection.send('knot.chat.message',
 					{ message: message }
 				);
 				$input.value = '';
@@ -48,7 +30,7 @@ $.fn.knotChat = function (options) {
 			return false;
 		};
 		options.connection.addEventHandlers({
-			'chat.message': function(key, content){
+			'knot.chat.message': function(key, content){
 				dialog.append($(messageMarkup($.extend({}, content, options))));
 				dialog[0].scrollTop = dialog[0].scrollHeight;
 			}
@@ -57,4 +39,4 @@ $.fn.knotChat = function (options) {
 	});
 };
 
-}(jQuery, _));
+});

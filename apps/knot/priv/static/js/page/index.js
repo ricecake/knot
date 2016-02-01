@@ -22,10 +22,6 @@ $(document).ready(function(){
 			if (needSetup) {
 				connection = new KnotConn({
 					url: '/ws/',
-					eventHandlers: {
-						'#': function(key, content) {
-						}
-					},
 					onOpen: function() {
 						$('.confirm').on('click', function(){
 							$('.knot-user-info').find(':submit').click();
