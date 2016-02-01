@@ -3,7 +3,8 @@
 	'KnotConn',
 	'component/chat',
 	'component/groupedit',
-	'component/session'
+	'component/session',
+	'component/videochat'
 ], function($, KnotConn){
 'use strict';
 
@@ -18,7 +19,9 @@ $(document).ready(function(){
 			$('#knot-edit').knotGroupEdit({
 				connection: connection
 			});
-			//$('#knot-video').knotVideoChat({});
+			$('#knot-video').knotVideoChat({
+				connection: connection
+			});
 			//$('#knot-board').knotWhiteBoard({});
 			$('#knot-session').knotSession({
 				connection: connection

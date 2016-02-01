@@ -1,4 +1,7 @@
-;(function($,_){
+;define([
+	'jquery',
+	'tpl!template/whiteboardWidget'
+], function($,containerMarkup){
 'use strict';
 
 var containerMarkup = _.template(
@@ -32,4 +35,4 @@ $.fn.knotWhiteBoard = function (options) {
 	});
 };
 
-}(jQuery,_));
+});
