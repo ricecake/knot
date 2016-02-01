@@ -17,17 +17,22 @@ $.fn.knotGroupEdit = function (options) {
 		var editor = CodeMirror(this, options.editorOptions);
 		conn.addEventHandlers({
 			'edit.doc.update': function(key, event, raw){
+				editor.off('beforeChange', propagateChange)
 				editor.doc.replaceRange(event.text.join(''), event.from, event.to);
+				editor.on('beforeChange', propagateChange)
 			}
 		});
-		editor.on('beforeChange', function(ed, event){
-			conn.send('edit.doc.update', {
-				text: event.text,
-				from: event.from,
-				to: event.to
-			});
-		});
+		editor.on('beforeChange', propagateChange);
 	});
 };
+
+function propagateChange(ed, event) {
+	conn.send('edit.doc.update', {
+		text: event.text,
+		from: event.from,
+		to: event.to
+	});
+	return event.cancel();
+}
 
 }(jQuery, _));
