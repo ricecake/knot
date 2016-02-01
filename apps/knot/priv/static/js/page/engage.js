@@ -1,4 +1,4 @@
-;define(['jquery', 'KnotConn', 'component/chat'], function($, KnotConn){
+;define(['jquery', 'KnotConn', 'component/chat', 'component/groupedit'], function($, KnotConn){
 'use strict';
 
 $(document).ready(function(){
@@ -9,9 +9,9 @@ $(document).ready(function(){
 			$('#knot-chat').knotChat({
 				connection: connection
 			});
-			//$('#knot-edit').knotGroupEdit({
-			//	connection: connection
-			//});
+			$('#knot-edit').knotGroupEdit({
+				connection: connection
+			});
 			//$('#knot-video').knotVideoChat({});
 			//$('#knot-board').knotWhiteBoard({});
 			//$('#knot-session').knotSession({});
