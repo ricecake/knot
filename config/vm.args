@@ -1,0 +1,6 @@
+-sname knot
+
+-setcookie knot_cookie
+
++K true
++A30

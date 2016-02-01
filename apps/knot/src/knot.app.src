@@ -1,0 +1,15 @@
+{application, knot,
+ [
+  {description, ""},
+  {vsn, "1"},
+  {registered, []},
+  {applications, [
+                  kernel,
+                  stdlib,
+                  cowboy,
+                  pubsub,
+                  jsx
+                 ]},
+  {mod, { knot_app, []}},
+  {env, []}
+ ]}.
