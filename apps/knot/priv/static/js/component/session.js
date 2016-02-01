@@ -1,15 +1,5 @@
-;(function($,_){
+;define(['jquery', 'tpl!template/session','tpl!template/session-entry'], function($,containerMarkup,entry){
 'use strict';
-var containerMarkup = _.template(
-"<div class='<%= sessionClass %>'>"+
-	"<ul class='<%= iconsClass %>'></ul>"+
-"</div>"
-);
-
-var iconMarkup = _.template(
-	"<li class='<%= iconClass %>'><span><%= identifier %></span></li>"
-);
-
 var defaults = {
 	sessionClass: 'knot-session-widgit',
 	iconsClass: 'knot-session-icon-container',
@@ -20,8 +10,14 @@ var defaults = {
 $.fn.knotSession = function (options) {
 	options = $.extend({}, defaults, options);
 	return $(this).each(function() {
-		$(this).append($(containerMarkup(options)));
+		var viewer = $(containerMarkup(options));
+		$(this).append(viewer);
+		options.connection.addEventHandlers({
+			'knot.session.join': function(key, content){
+				viewer.find('.'+options.iconsClass).append($(entry($.extend({}, content, options))));
+			}
+		});
 	});
 };
 
-}(jQuery, _));
+});
