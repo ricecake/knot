@@ -13,7 +13,7 @@ KnotData.prototype.get = function(key) {
 	return JSON.stringify(localStorage.getItem(key));
 };
 
-KnotData.prototype.mutate = function(key, callback) {
+KnotData.prototype.do = function(key, callback) {
 	var value = this.get(key);
 	var res = callback.call(value);
 	this.set(key, value);
