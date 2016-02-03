@@ -42,11 +42,19 @@ send(Handler, Message) when is_map(Message) ->
 %% ------------------------------------------------------------------
 
 initSession(Req, State) ->
-	#{sessionid := SessionId} = cowboy_req:match_cookies([{sessionid, [], undefined}], Req),
+	#{ sessionid := SessionId } = cowboy_req:match_cookies([{sessionid, [], undefined}], Req),
 	{ok, Req2, NewState} = case SessionId of
 		undefined       -> initializeNewSession(Req, State);
 		ExistingSession -> bindExistingSession(Req, State, ExistingSession)
 	end,
+	#{ sessionid := Sess } = NewState,
+	send(self(), #{
+		from    => Sess,
+		type    => <<"knot.session.details">>,
+		content => #{
+			id => Sess
+		}
+	}),
 	{ok, Req2, NewState}.
 
 initializeNewSession(Req, State) ->

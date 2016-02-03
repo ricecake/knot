@@ -1,13 +1,23 @@
-;define(['jquery', 'KnotConn', 'materialize'], function($, KnotConn){
+;define(['jquery', 'KnotConn', 	'component/datastore', 'materialize'], function($, KnotConn, KnotData){
 'use strict';
 
 $(document).ready(function(){
 	var connection;
 	var needSetup = true;
+	var dataStore = new KnotData;
 	var forwardToChannel = function() {
-		console.log('here');
+		var details = {
+			channel: $('#channel_name').val(),
+			nick: $('#nick_name').val()
+		};
+		dataStore.do('self', function() {
+			$.extend(this, details);
+		});
+		connection.send('knot.session.join', {
+			channel: details.channel
+		});
 		connection.send('knot.session.data.update', {
-			nickname: $('#nick_name').val()
+			nickname: details.nick
 		});
 		$('.wait-content').slideToggle(500);
 		$('.wait-indicator').slideToggle(500);

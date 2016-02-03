@@ -20,9 +20,21 @@ $.fn.knotSession = function (options) {
 		$(this).append(viewer);
 		options.connection.addEventHandlers({
 			'knot.session.join': function(key, content, raw){
-				dataStore.set(raw.from, {});
+				dataStore.do(raw.from, function() {
+					$.extend(this, content);
+				});
 				viewer.find('.'+options.iconsClass).append($(entry($.extend({}, content, options))));
-			}
+			},
+			'knot.session.details': function(key, content, raw) {
+				dataStore.do('self', function() {
+					$.extend(this, content);
+				});
+			},
+			'knot.session.data.update': function(key, content, raw) {
+				dataStore.do(raw.from, function() {
+					$.extend(this, content);
+				});
+			},
 		});
 	});
 };
