@@ -74,6 +74,9 @@ handle_client_task(#{ <<"type">> := <<"knot.session.join">>, <<"content">> := #{
 	end),
 	pubsub:publish(Channel, <<"knot.session.join">>, Msg#{ from => UID }),
 	{ok, State#{ channel => Channel }};
+handle_client_task(#{ <<"to">> := To } = Msg, #{ channel := Channel, sessionid := UID } = State) ->
+	pubsub:publish(Channel, To, Msg#{ from => UID }),
+	{ok, State};
 handle_client_task(#{ <<"type">> := Type } = Msg, #{ channel := Channel, sessionid := UID } = State) ->
 	pubsub:publish(Channel, Type, Msg#{ from => UID }),
 	{ok, State};

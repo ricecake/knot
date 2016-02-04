@@ -1,9 +1,10 @@
 ;define([
 	'jquery',
+	'underscore',
 	'component/datastore',
 	'tpl!template/session',
 	'tpl!template/session-entry'
-], function($,KnotData,containerMarkup,entry){
+], function($,_,KnotData,containerMarkup,entry){
 'use strict';
 var defaults = {
 	sessionClass: 'knot-session-widgit',
@@ -15,13 +16,19 @@ var defaults = {
 $.fn.knotSession = function (options) {
 	var dataStore = new KnotData;
 	options = $.extend({}, defaults, options);
+	var conn = options.connection;
 	return $(this).each(function() {
 		var viewer = $(containerMarkup(options));
 		$(this).append(viewer);
-		options.connection.addEventHandlers({
+		conn.addEventHandlers({
 			'knot.session.join': function(key, content, raw){
 				dataStore.do(raw.from, function() {
 					$.extend(this, content);
+				});
+				dataStore.do('self', function() {
+					conn.send('knot.session.data.update', _.omit(this, 'id'), {
+						to: raw.from
+					});
 				});
 				viewer.find('.'+options.iconsClass).append($(entry($.extend({}, content, options))));
 			},
