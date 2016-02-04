@@ -4,6 +4,7 @@
 -export([init/2]).
 -export([websocket_handle/3]).
 -export([websocket_info/3]).
+-export([terminate/3]).
 
 %% ===================================================================
 %% Cowboy callbacks
@@ -27,6 +28,13 @@ websocket_info({send, Message}, Req, State) ->
 websocket_info(Message, Req, State) ->
 	{reply, Message, Req, State}.
 
+terminate(_, Req, #{ channel := Channel, sessionid := UID } = State) ->
+	pubsub:publish(Channel, <<"knot.session.disconnected">>, #{
+		from => UID,
+		type => <<"knot.session.disconnected">>,
+		content => #{}
+	}),
+	{ok, Req, State}.
 
 %% ------------------------------------------------------------------
 %% API Function Definitions

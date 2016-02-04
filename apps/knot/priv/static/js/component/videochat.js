@@ -1,31 +1,169 @@
 ;define([
 	'jquery',
+	'component/datastore',
 	'tpl!template/videoChatWidget',
+	'tpl!template/videoChat-remote',
 	'lib/webRTCAdapter'
-], function($,containerMarkup){
+], function($,KnotData,containerMarkup,remoteMarkup){
 'use strict';
+
+var dataStore = new KnotData;
+var localStream;
+var conn;
+
+var remoteElements = {};
+var peerConnections = {};
 
 var defaults = {
 };
 
 $.fn.knotVideoChat = function (options) {
 	options = $.extend({}, defaults, options);
-	var localStream;
+	conn = options.connection;
 
 	return $(this).each(function() {
 		var container = $(containerMarkup(options));
 		$(this).append(container);
-		window.getUserMedia({ audio: true, video: true },
-			function (stream) {
-				var localVideo = container.find('.local-video')[0];
-				localStream = stream;
-				window.attachMediaStream(localVideo, localStream);
-			},
-			function (e) {
-				window.console.log(e);
-			}
-		);
+		window.getUserMedia({ audio: true, video: true }, function (stream) {
+			var localVideo = container.find('.local-video')[0];
+			localStream = stream;
+			window.attachMediaStream(localVideo, localStream);
+			conn.addEventHandlers({
+				'knot.videochat.join': function(key, content, raw) {
+					if(initiator(raw.from)) {
+						doOffer(container, raw.from);
+					}
+				},
+				'knot.videochat.offer': function(key, content, raw) {
+					doAnswer(container, content, raw.from)
+				},
+				'knot.videochat.answer': function(key, content, raw) {
+					peerConnections[raw.from].setRemoteDescription(new window.RTCSessionDescription(content));
+				},
+				'knot.videochat.icecandidate': function(key, content, raw) {
+					var icecandidate = new window.RTCIceCandidate({
+						sdpMLineIndex: content.sdpMLineIndex,
+						candidate: content.candidate
+					});
+					peerConnections[raw.from].addIceCandidate(icecandidate);
+				},
+				'knot.session.disconnected': function(key, content, raw) {
+					hangup(raw.from);
+				}
+			});
+			conn.send('knot.videochat.join', {});
+		}, function (e) {
+			window.console.log(e);
+		});
+
 	});
 };
 
+function initiator(them) {
+	return !(dataStore.get('self').id === them);
+}
+
+function hangup(session) {
+	console.log('hangup');
+	remoteElements[session].remove();
+	peerConnections[session].close();
+}
+
+
+function doOffer(container, session) {
+	var peerConnection = new window.RTCPeerConnection(
+		{ iceServers: [
+			{ url: 'stun:stun.l.google.com:19302' },
+			{ url: 'stun:stun1.l.google.com:19302' },
+			{ url: 'stun:stun2.l.google.com:19302' },
+			{ url: 'stun:stun3.l.google.com:19302' },
+			{ url: 'stun:stun4.l.google.com:19302' }
+		] },
+		{ optional: [{ DtlsSrtpKeyAgreement: true }] }
+		);
+
+	peerConnection.addStream(localStream);
+
+	peerConnection.onaddstream = function (event) {
+		var remoteElement = $(remoteMarkup());
+		$(container).find('.video-container').append(remoteElement);
+		remoteElements[session] = remoteElement;
+
+		var remoteVideoElement = remoteElement[0];
+		window.attachMediaStream(remoteVideoElement, event.stream);
+	};
+
+	peerConnection.oniceconnectionstatechange = function () {
+		if (peerConnection.iceConnectionState === 'disconnected') {
+			hangup(session);
+		}
+	};
+
+	peerConnection.onicecandidate = function (event) {
+		if (event.candidate) {
+			conn.send('knot.videochat.icecandidate', {
+				sdpMLineIndex: event.candidate.sdpMLineIndex,
+				sdpMid: event.candidate.sdpMid,
+				candidate: event.candidate.candidate
+			}, { to: session });
+		}
+	};
+
+	peerConnection.createOffer(function (desc) {
+		peerConnection.setLocalDescription(desc, function () {
+			conn.send('knot.videochat.offer', desc, { to: session });
+		}, function (e) { window.console.log(e); });
+	}, function (e) { window.console.log(e); });
+
+	peerConnections[session] = peerConnection;
+}
+
+function doAnswer(container, content, session) {
+	var offer = new window.RTCSessionDescription(content);
+
+	var peerConnection = new window.RTCPeerConnection(
+		{ iceServers: [
+			{ url: 'stun:stun.l.google.com:19302' },
+			{ url: 'stun:stun1.l.google.com:19302' },
+			{ url: 'stun:stun2.l.google.com:19302' },
+			{ url: 'stun:stun3.l.google.com:19302' },
+			{ url: 'stun:stun4.l.google.com:19302' }
+		] },
+		{ optional: [{ DtlsSrtpKeyAgreement: true }] }
+		);
+
+	peerConnection.addStream(localStream);
+
+	peerConnection.onicecandidate = function (event) {
+		if (event.candidate) {
+			conn.send('knot.videochat.icecandidate', {
+				sdpMLineIndex: event.candidate.sdpMLineIndex,
+				sdpMid: event.candidate.sdpMid,
+				candidate: event.candidate.candidate
+			}, { to: session });
+		}
+	};
+
+	peerConnection.setRemoteDescription(offer);
+	peerConnection.createAnswer(function (answer) {
+		peerConnection.setLocalDescription(answer);
+		conn.send('knot.videochat.answer', answer, { to: session });
+	}, function (e) { window.console.log(e); });
+
+	peerConnection.onaddstream = function(event) {
+		var remoteElement = $(remoteMarkup());
+		$(container).find('.video-container').append(remoteElement);
+		remoteElements[session] = remoteElement;
+
+		var remoteVideoElement = remoteElement[0];
+		window.attachMediaStream(remoteVideoElement, event.stream);
+	};
+
+	peerConnection.oniceconnectionstatechange = function () {
+		if (peerConnection.iceConnectionState === 'disconnected') {
+			hangup(session);
+		}
+	};
+	peerConnections[session] = peerConnection;
+}
 });

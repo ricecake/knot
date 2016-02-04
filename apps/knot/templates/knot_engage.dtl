@@ -14,18 +14,20 @@
 <div class="container">
 	<div class="section">
 		<div class="row">
-		<div class="col s6">
-			<div id="knot-chat"></div>
+		    <div class="col s12">
+			    <div id="knot-video"></div>
+		    </div>
 		</div>
-		<div class="col s6">
-			<div id="knot-edit"></div>
-		</div>
-		<div class="col s6">
-			<div id="knot-video"></div>
-		</div>
-		<div class="col s6">
-			<div id="knot-session"></div>
-		</div>
+		<div class="row">
+		    <div class="col s6">
+			    <div id="knot-chat"></div>
+		    </div>
+		    <div class="col s6">
+			    <div id="knot-edit"></div>
+		    </div>
+		    <div class="col s6">
+			    <div id="knot-session"></div>
+		    </div>
 		</div>
 	</div>
 </div>
