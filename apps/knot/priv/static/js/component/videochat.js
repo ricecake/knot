@@ -31,11 +31,11 @@ $.fn.knotVideoChat = function (options) {
 			conn.addEventHandlers({
 				'knot.videochat.join': function(key, content, raw) {
 					if(initiator(raw.from)) {
-						doOffer(container, raw.from);
+						rtcHandshake(container, raw.from);
 					}
 				},
 				'knot.videochat.offer': function(key, content, raw) {
-					doAnswer(container, content, raw.from)
+					rtcHandshake(container, raw.from, content)
 				},
 				'knot.videochat.answer': function(key, content, raw) {
 					peerConnections[raw.from].setRemoteDescription(new window.RTCSessionDescription(content));
@@ -64,13 +64,11 @@ function initiator(them) {
 }
 
 function hangup(session) {
-	console.log('hangup');
 	remoteElements[session].remove();
 	peerConnections[session].close();
 }
 
-
-function doOffer(container, session) {
+function rtcHandshake(container, session, content) {
 	var peerConnection = new window.RTCPeerConnection(
 		{ iceServers: [
 			{ url: 'stun:stun.l.google.com:19302' },
@@ -81,8 +79,6 @@ function doOffer(container, session) {
 		] },
 		{ optional: [{ DtlsSrtpKeyAgreement: true }] }
 		);
-
-	peerConnection.addStream(localStream);
 
 	peerConnection.onaddstream = function (event) {
 		var remoteElement = $(remoteMarkup());
@@ -93,12 +89,6 @@ function doOffer(container, session) {
 		window.attachMediaStream(remoteVideoElement, event.stream);
 	};
 
-	peerConnection.oniceconnectionstatechange = function () {
-		if (peerConnection.iceConnectionState === 'disconnected') {
-			hangup(session);
-		}
-	};
-
 	peerConnection.onicecandidate = function (event) {
 		if (event.candidate) {
 			conn.send('knot.videochat.icecandidate', {
@@ -109,61 +99,33 @@ function doOffer(container, session) {
 		}
 	};
 
-	peerConnection.createOffer(function (desc) {
-		peerConnection.setLocalDescription(desc, function () {
-			conn.send('knot.videochat.offer', desc, { to: session });
-		}, function (e) { window.console.log(e); });
-	}, function (e) { window.console.log(e); });
-
-	peerConnections[session] = peerConnection;
-}
-
-function doAnswer(container, content, session) {
-	var offer = new window.RTCSessionDescription(content);
-
-	var peerConnection = new window.RTCPeerConnection(
-		{ iceServers: [
-			{ url: 'stun:stun.l.google.com:19302' },
-			{ url: 'stun:stun1.l.google.com:19302' },
-			{ url: 'stun:stun2.l.google.com:19302' },
-			{ url: 'stun:stun3.l.google.com:19302' },
-			{ url: 'stun:stun4.l.google.com:19302' }
-		] },
-		{ optional: [{ DtlsSrtpKeyAgreement: true }] }
-		);
+	peerConnection.oniceconnectionstatechange = function () {
+		if (peerConnection.iceConnectionState === 'disconnected') {
+			hangup(session);
+		}
+	};
 
 	peerConnection.addStream(localStream);
 
-	peerConnection.onicecandidate = function (event) {
-		if (event.candidate) {
-			conn.send('knot.videochat.icecandidate', {
-				sdpMLineIndex: event.candidate.sdpMLineIndex,
-				sdpMid: event.candidate.sdpMid,
-				candidate: event.candidate.candidate
-			}, { to: session });
-		}
-	};
+	if (typeof content === 'undefined') {
+		peerConnection.createOffer(function (desc) {
+			peerConnection.setLocalDescription(desc, function () {
+				conn.send('knot.videochat.offer', desc, { to: session });
+			}, function (e) { window.console.log(e); });
+		}, function (e) { window.console.log(e); });
+	}
+	else {
+		var offer = new window.RTCSessionDescription(content);
 
-	peerConnection.setRemoteDescription(offer);
-	peerConnection.createAnswer(function (answer) {
-		peerConnection.setLocalDescription(answer);
-		conn.send('knot.videochat.answer', answer, { to: session });
-	}, function (e) { window.console.log(e); });
+		peerConnection.setRemoteDescription(offer);
 
-	peerConnection.onaddstream = function(event) {
-		var remoteElement = $(remoteMarkup());
-		$(container).find('.video-container').append(remoteElement);
-		remoteElements[session] = remoteElement;
+		peerConnection.createAnswer(function (answer) {
+			peerConnection.setLocalDescription(answer);
+			conn.send('knot.videochat.answer', answer, { to: session });
+		}, function (e) { window.console.log(e); });
+	}
 
-		var remoteVideoElement = remoteElement[0];
-		window.attachMediaStream(remoteVideoElement, event.stream);
-	};
-
-	peerConnection.oniceconnectionstatechange = function () {
-		if (peerConnection.iceConnectionState === 'disconnected') {
-			hangup(session);
-		}
-	};
 	peerConnections[session] = peerConnection;
 }
+
 });
