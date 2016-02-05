@@ -1,1 +1,13 @@
+.pip {
+	max-width: 10%;
+	min-width: 8em;
+	border: 2px solid #fff;
+	box-shadow: -1px -1px 6px #000;
+}
 
+.top {
+	position: absolute;
+	top: 0.7em;
+	left: 0.7em;
+
+}

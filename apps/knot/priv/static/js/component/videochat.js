@@ -66,6 +66,12 @@ function initiator(them) {
 function hangup(session) {
 	remoteElements[session].remove();
 	peerConnections[session].close();
+	delete remoteElements[session];
+	delete peerConnections[session];
+
+	if (!Object.keys(remoteElements).length) {
+		$('.local-video').removeClass('pip top');
+	}
 }
 
 function rtcHandshake(container, session, content) {
@@ -82,6 +88,7 @@ function rtcHandshake(container, session, content) {
 
 	peerConnection.onaddstream = function (event) {
 		var remoteElement = $(remoteMarkup());
+		container.find('.local-video').addClass('pip top');
 		$(container).find('.video-container').append(remoteElement);
 		remoteElements[session] = remoteElement;
 
