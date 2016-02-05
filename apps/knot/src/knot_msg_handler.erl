@@ -34,7 +34,10 @@ terminate(_, Req, #{ channel := Channel, sessionid := UID } = State) ->
 		type => <<"knot.session.disconnected">>,
 		content => #{}
 	}),
+	{ok, Req, State};
+terminate(_, Req, State) ->
 	{ok, Req, State}.
+
 
 %% ------------------------------------------------------------------
 %% API Function Definitions

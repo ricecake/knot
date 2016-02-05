@@ -30,7 +30,7 @@ $.fn.knotSession = function (options) {
 						to: raw.from
 					});
 				});
-				viewer.find('.'+options.iconsClass).append($(entry($.extend({}, content, options))));
+				viewer.find('.'+options.iconsClass).append($(entry($.extend({ session: raw.from }, content, options))));
 			},
 			'knot.session.details': function(key, content, raw) {
 				dataStore.do('self', function() {
@@ -41,7 +41,13 @@ $.fn.knotSession = function (options) {
 				dataStore.do(raw.from, function() {
 					$.extend(this, content);
 				});
+				if(viewer.find('[data-session="'+ raw.from +'"]').length === 0) {
+					viewer.find('.'+options.iconsClass).append($(entry($.extend({ session: raw.from }, content, options))));
+				}
 			},
+			'knot.session.disconnected': function(key, content, raw) {
+				viewer.find('[data-session="'+ raw.from +'"]').remove();
+			}
 		});
 	});
 };
