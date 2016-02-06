@@ -8,6 +8,7 @@
                   stdlib,
                   cowboy,
                   pubsub,
+                  erlydtl,
                   jsx
                  ]},
   {mod, { knot_app, []}},
