@@ -11,7 +11,7 @@
        {ref,"0b1cbebc68c86f02608c3c041a2361adf9acbc17"}},
   0},
  {<<"goldrush">>,
-  {git,"git://github.com/DeadZen/goldrush.git",
+  {git,"https://github.com/DeadZen/goldrush.git",
        {ref,"212299233c7e7eb63a97be2777e1c05ebaa58dbe"}},
   1},
  {<<"jsx">>,
