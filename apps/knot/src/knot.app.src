@@ -9,6 +9,7 @@
                   cowboy,
                   pubsub,
                   erlydtl,
+                  uuid,
                   jsx
                  ]},
   {mod, { knot_app, []}},
