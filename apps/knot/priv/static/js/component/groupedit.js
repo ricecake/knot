@@ -1,4 +1,9 @@
-;define(['jquery', 'lib/codemirror'], function($, CodeMirror){
+;define([
+	'jquery',
+	'underscore',
+	'component/treedoc',
+	'lib/codemirror'
+], function($, _, TreeDoc, CodeMirror){
 'use strict';
 
 var defaults = {
@@ -12,12 +17,14 @@ var defaults = {
 $.fn.knotGroupEdit = function (options) {
 	options = $.extend({}, defaults, options);
 	var conn = options.connection;
+	var td = new TreeDoc;
 	var propagateChange = function(ed, event) {
-		conn.send('knot.edit.doc.update', {
-			text: event.text,
-			from: event.from,
-			to: event.to
+		var msg = _.pick(event, 'from', 'to', 'text', 'origin');
+		var startPos = ed.indexFromPos(event.from);
+		event.text.join('\n').split('').map(function(item, index){
+			td.insertLocal(startPos+index, item);
 		});
+		conn.send('knot.edit.doc.update', msg);
 		return event.cancel();
 	};
 	CodeMirror.modeURL = options.modeURL;
