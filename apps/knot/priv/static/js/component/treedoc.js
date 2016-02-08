@@ -76,16 +76,18 @@ TreeDoc.prototype.insertLocal = function(pos, value) {
 
 TreeDoc.prototype.serialize = function() {
 	var res = [];
-	var traverse = function(curr) {
-		if (typeof curr.left !== 'undefined') {
-			traverse(curr.left);
+	var stack = [], node = this._tree;
+	while(stack.length || typeof node !== 'undefined'){
+		if (typeof node !== 'undefined') {
+			stack.push(node);
+			node = node.left;
 		}
-		res.push(curr.value);
-		if (typeof curr.right !== 'undefined') {
-			traverse(curr.right);
+		else {
+			node = stack.pop();
+			res.push(node.value);
+			node = node.right;
 		}
-	};
-	traverse(this._tree);
+	}
 	return res.join('');
 };
 
