@@ -59,6 +59,11 @@ $.fn.knotVideoChat = function (options) {
 	});
 };
 
+$(document).on('click', '.video-container video', function() {
+	$('.video-container video').removeClass('main').addClass('pip');
+	$(this).removeClass('pip').addClass("main");
+});
+
 function initiator(them) {
 	return !(dataStore.get('self').id === them);
 }
@@ -70,7 +75,7 @@ function hangup(session) {
 	delete peerConnections[session];
 
 	if (!Object.keys(remoteElements).length) {
-		$('.local-video').removeClass('pip top');
+		$('.local-video').removeClass('pip').addClass('main');
 	}
 }
 
@@ -88,10 +93,9 @@ function rtcHandshake(container, session, content) {
 
 	peerConnection.onaddstream = function (event) {
 		var remoteElement = $(remoteMarkup());
-		container.find('.local-video').addClass('pip top');
+		container.find('.main').toggleClass('main pip');
 		$(container).find('.video-container').append(remoteElement);
 		remoteElements[session] = remoteElement;
-
 		var remoteVideoElement = remoteElement[0];
 		window.attachMediaStream(remoteVideoElement, event.stream);
 	};

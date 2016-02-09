@@ -1,22 +1,37 @@
 .video-container {
+	height: 100%;
+	box-sizing: content-box;
 	max-height: 100vh;
+	display:flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+	justify-content: space-around;
+	align-content: flex-end;
+	align-items: flex-start;
 }
 
 .video-container video {
+	width: 70vw;
 	max-height: 80vh;
 	max-width: 70vw;
+	flex-grow: 1;
+	flex-shrink: 0;
+	z-index: 1;
 }
 
 .video-container video.pip {
-	max-width: 10%;
-	min-width: 8em;
 	border: 2px solid #fff;
 	box-shadow: -1px -1px 6px #000;
+	width: 25vh;
+	max-width: 10%;
+	flex-grow: 1;
+	flex-shrink: 0;
 }
 
-.video-container video.top {
+.video-container video.main {
 	position: absolute;
-	top: 0.7em;
-	left: 0.7em;
-
+	z-index: 0;
+	left: 0;
+	right: 0;
+	top: 10vh;
 }
