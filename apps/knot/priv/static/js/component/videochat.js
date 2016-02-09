@@ -69,14 +69,18 @@ function initiator(them) {
 }
 
 function hangup(session) {
+	if (remoteElements[session].hasClass('main')) {
+		if (!Object.keys(remoteElements).length) {
+			$('.local-video').removeClass('pip').addClass('main');
+		}
+		else {
+			Object.keys(remoteElements)[0].removeClass('pip').addClass('main');
+		}
+	}
 	remoteElements[session].remove();
 	peerConnections[session].close();
 	delete remoteElements[session];
 	delete peerConnections[session];
-
-	if (!Object.keys(remoteElements).length) {
-		$('.local-video').removeClass('pip').addClass('main');
-	}
 }
 
 function rtcHandshake(container, session, content) {
