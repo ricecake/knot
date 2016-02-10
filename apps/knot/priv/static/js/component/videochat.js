@@ -102,6 +102,13 @@ function rtcHandshake(container, session, content) {
 		remoteElements[session] = remoteElement;
 		var remoteVideoElement = remoteElement[0];
 		window.attachMediaStream(remoteVideoElement, event.stream);
+		// This is just for dev debugging of styles.
+		//for(var i=0; i<5; i++) {
+		//	var remoteElement = $(remoteMarkup());
+		//	remoteElement.toggleClass('main pip');
+		//	$(container).find('.video-container').append(remoteElement);
+		//	window.attachMediaStream(remoteElement[0], event.stream);
+		//}
 	};
 
 	peerConnection.onicecandidate = function (event) {

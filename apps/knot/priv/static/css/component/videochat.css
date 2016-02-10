@@ -6,32 +6,27 @@
 	flex-direction: row;
 	flex-wrap: wrap;
 	justify-content: space-around;
-	align-content: flex-end;
 	align-items: flex-start;
 }
 
 .video-container video {
-	width: 70vw;
+	/*width: 70vw;*/
 	max-height: 80vh;
 	max-width: 70vw;
-	flex-grow: 1;
-	flex-shrink: 0;
+	flex-grow: 0;
+	flex-shrink: 1;
 	z-index: 1;
 }
 
 .video-container video.pip {
-	border: 2px solid #fff;
 	box-shadow: -1px -1px 6px #000;
-	width: 25vh;
-	max-width: 10%;
-	flex-grow: 1;
-	flex-shrink: 0;
+	max-width: 25%;
+	flex-basis: 10%;
+	order: 1;
 }
 
 .video-container video.main {
-	position: absolute;
+	margin-top: 1em;
 	z-index: 0;
-	left: 0;
-	right: 0;
-	top: 10vh;
+	order: 2;
 }
