@@ -10,7 +10,7 @@
 }
 
 .video-container video {
-	/*width: 70vw;*/
+	width: 70vw;
 	max-height: 80vh;
 	max-width: 70vw;
 	flex-grow: 0;
