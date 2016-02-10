@@ -74,7 +74,9 @@ function hangup(session) {
 			$('.local-video').removeClass('pip').addClass('main');
 		}
 		else {
-			$(Object.keys(remoteElements)[0]).removeClass('pip').addClass('main');
+			$(Object.keys(remoteElements).find(function(el){
+				return el !== session;
+			})).removeClass('pip').addClass('main');
 		}
 	}
 	remoteElements[session].remove();
