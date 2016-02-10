@@ -55,7 +55,7 @@ send(Handler, Message) when is_map(Message) ->
 initSession(Req, State) ->
 	SessionId = case cowboy_req:match_cookies([{sessionid, [], undefined}], Req) of
 		#{ sessionid := [Cookie |_] } -> Cookie;
-		#{ sessionid := Cookie } when is_binary(Cookie) -> Cookie
+		#{ sessionid := Cookie } -> Cookie
 	end,
 	{ok, Req2, NewState} = case SessionId of
 		undefined       -> initializeNewSession(Req, State);
