@@ -70,6 +70,7 @@ function initiator(them) {
 
 function hangup(session) {
 	if ($(remoteElements[session]).hasClass('main')) {
+		$(remoteElements[session]).removeClass('main');
 		if (!Object.keys(remoteElements).length) {
 			$('.local-video').removeClass('pip').addClass('main');
 		}
