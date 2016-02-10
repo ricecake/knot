@@ -69,12 +69,12 @@ function initiator(them) {
 }
 
 function hangup(session) {
-	if (remoteElements[session].hasClass('main')) {
+	if ($(remoteElements[session]).hasClass('main')) {
 		if (!Object.keys(remoteElements).length) {
 			$('.local-video').removeClass('pip').addClass('main');
 		}
 		else {
-			Object.keys(remoteElements)[0].removeClass('pip').addClass('main');
+			$(Object.keys(remoteElements)[0]).removeClass('pip').addClass('main');
 		}
 	}
 	remoteElements[session].remove();
