@@ -53,7 +53,10 @@ send(Handler, Message) when is_map(Message) ->
 %% ------------------------------------------------------------------
 
 initSession(Req, State) ->
-	#{ sessionid := SessionId } = cowboy_req:match_cookies([{sessionid, [], undefined}], Req),
+	SessionId = case cowboy_req:match_cookies([{sessionid, [], undefined}], Req) of
+		#{ sessionid := [Sess |_] } -> Sess;
+		#{ sessionid := [Sess |_] } -> Sess
+	end,
 	{ok, Req2, NewState} = case SessionId of
 		undefined       -> initializeNewSession(Req, State);
 		ExistingSession -> bindExistingSession(Req, State, ExistingSession)
