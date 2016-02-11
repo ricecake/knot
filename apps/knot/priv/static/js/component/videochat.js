@@ -80,10 +80,14 @@ function hangup(session) {
 			})).removeClass('pip').addClass('main');
 		}
 	}
-	remoteElements[session].remove();
-	peerConnections[session].close();
-	delete remoteElements[session];
-	delete peerConnections[session];
+	if (remoteElements[session]) {
+		remoteElements[session].remove();
+		delete remoteElements[session];
+	}
+	if (peerConnections[session]) {
+		peerConnections[session].close();
+		delete peerConnections[session];
+	}
 }
 
 function rtcHandshake(container, session, content) {
