@@ -103,6 +103,15 @@ function rtcHandshake(container, session, content) {
 		);
 
 	peerConnection.onaddstream = function (event) {
+		if (remoteElements[session]) {
+			remoteElements[session].remove();
+			delete remoteElements[session];
+		}
+		if (peerConnections[session]) {
+			peerConnections[session].close();
+			delete peerConnections[session];
+		}
+
 		var remoteElement = $(remoteMarkup());
 		container.find('.main').toggleClass('main pip');
 		$(container).find('.video-container').append(remoteElement);
