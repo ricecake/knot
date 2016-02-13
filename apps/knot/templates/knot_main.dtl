@@ -12,7 +12,6 @@
 		<link href="/static/css/page/{{ page }}.css" rel="stylesheet" type="text/css">
 		{% block extraCss %}
 		{% endblock %}
-
 		{% block headExtras %}
 		{% endblock %}
 	</head>

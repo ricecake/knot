@@ -1,5 +1,4 @@
 {% extends "knot_main.dtl" %}
-
 {% block mainContent %}
 <div class="section no-pad-bot" id="index-banner">
         <div class="container">
@@ -47,8 +46,6 @@
                 </div>
         </div>
 </div>
-
-
 <div class="container">
         <div class="section">
 <!--   Icon Section   -->
@@ -79,5 +76,4 @@
                 </div>
         </div>
 </div>
-
 {% endblock %}

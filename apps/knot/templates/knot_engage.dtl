@@ -1,14 +1,11 @@
 {% extends "knot_main.dtl" %}
-
 {% block title %}{{ channel }}{% endblock %}
-
 {% block extraCss %}
 	<link href="/static/css/component/chat.css" rel="stylesheet" type="text/css">
 	<link href="/static/css/component/videochat.css" rel="stylesheet" type="text/css">
 	<link href="/static/css/component/session.css" rel="stylesheet" type="text/css">
 	<link href="/static/css/codemirror.css" rel="stylesheet" type="text/css">
 {% endblock %}
-
 {% block mainContent %}
 <input id='knot-channel-name' type='hidden' value='{{ channel }}' />
 <div class="container">
@@ -31,5 +28,4 @@
 		</div>
 	</div>
 </div>
-
 {% endblock %}
