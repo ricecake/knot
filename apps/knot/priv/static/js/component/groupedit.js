@@ -20,10 +20,10 @@ $.fn.knotGroupEdit = function (options) {
 	var td = new TreeDoc;
 	var propagateChange = function(ed, event) {
 		var msg = _.pick(event, 'from', 'to', 'text', 'origin');
-		var startPos = ed.indexFromPos(event.from);
-		event.text.join('\n').split('').map(function(item, index){
-			td.insertLocal(startPos+index, item);
-		});
+		//var startPos = ed.indexFromPos(event.from);
+		//event.text.join('\n').split('').map(function(item, index){
+		//	td.insertLocal(startPos+index, item);
+		//});
 		conn.send('knot.edit.doc.update', msg);
 		return event.cancel();
 	};
