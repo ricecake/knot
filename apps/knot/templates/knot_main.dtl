@@ -5,6 +5,7 @@
 		<title>Knot - {% block title %}Collaboration And Stuff{% endblock %}</title>
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+		<link rel="shortcut icon" href="/static/img/tknot.ico" />
 		<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 		<link href="/static/css/materialize.min.css" rel="stylesheet" type="text/css" media="screen,projection">
 		<link href="/static/css/site.css" rel="stylesheet" type="text/css">
