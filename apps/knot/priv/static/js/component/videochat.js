@@ -30,15 +30,7 @@ $.fn.knotVideoChat = function (options) {
 			window.attachMediaStream(localVideo, localStream);
 			conn.addEventHandlers({
 				'knot.videochat.join': function(key, content, raw) {
-					if (remoteElements[session]) {
-						remoteElements[session].remove();
-						delete remoteElements[session];
-					}
-					if (peerConnections[session]) {
-						peerConnections[session].close();
-						delete peerConnections[session];
-					}
-
+					hangup(raw.from);
 					if(initiator(raw.from)) {
 						rtcHandshake(container, raw.from);
 					}
