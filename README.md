@@ -6,3 +6,4 @@ TODO:
 * text chat
 * video chat
 * document editor
+* checklist
