@@ -6,8 +6,7 @@
 
 var defaults = {
 	width: 1800,
-	height: 900,
-	canvasClass: 'knot-canvas'
+	height: 900
 };
 
 $.fn.knotWhiteBoard = function (options) {
