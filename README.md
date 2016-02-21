@@ -7,3 +7,4 @@ TODO:
 * video chat
 * document editor
 * checklist
+* p2p file share
