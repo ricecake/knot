@@ -10,7 +10,7 @@ var defaults = {
 	sessionClass: 'knot-session-widgit',
 	iconsClass: 'knot-session-icon-container',
 	iconClass: 'knot-session-icon',
-	identifier: 'Anonymous User'
+	nickname: 'Anonymous User'
 };
 
 $.fn.knotSession = function (options) {
