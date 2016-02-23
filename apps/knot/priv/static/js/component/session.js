@@ -43,7 +43,9 @@ $.fn.knotSession = function (options) {
 				});
 				if(viewer.find('[data-session="'+ raw.from +'"]').length === 0) {
 					viewer.find('.'+options.iconsClass).append($(entry($.extend({ session: raw.from }, content, options))));
-				}
+				} else {
+ viewer.find('[data-session="'+ raw.from +'"]').replace($(entry($.extend({ session: raw.from }, content, options))));
+}
 			},
 			'knot.session.disconnected': function(key, content, raw) {
 				viewer.find('[data-session="'+ raw.from +'"]').remove();
