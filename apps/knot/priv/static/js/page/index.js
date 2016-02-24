@@ -8,7 +8,7 @@ $(document).ready(function(){
 	var forwardToChannel = function() {
 		var details = {
 			channel: $('#channel_name').val(),
-			nick: $('#nick_name').val()
+			nickname: $('#nick_name').val()
 		};
 		dataStore.do('self', function() {
 			$.extend(this, details);

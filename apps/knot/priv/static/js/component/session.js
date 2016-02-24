@@ -30,7 +30,8 @@ $.fn.knotSession = function (options) {
 						to: raw.from
 					});
 				});
-				viewer.find('.'+options.iconsClass).append($(entry($.extend({ session: raw.from }, content, options))));
+				var entity = dataStore.get(raw.from);
+				viewer.find('.'+options.iconsClass).append($(entry($.extend({ session: raw.from }, options, entity))));
 			},
 			'knot.session.details': function(key, content, raw) {
 				dataStore.do('self', function() {
@@ -41,11 +42,12 @@ $.fn.knotSession = function (options) {
 				dataStore.do(raw.from, function() {
 					$.extend(this, content);
 				});
+				var entity = dataStore.get(raw.from);
 				if(viewer.find('[data-session="'+ raw.from +'"]').length === 0) {
-					viewer.find('.'+options.iconsClass).append($(entry($.extend({ session: raw.from }, content, options))));
+					viewer.find('.'+options.iconsClass).append($(entry($.extend({ session: raw.from }, options, entity))));
 				} else {
- viewer.find('[data-session="'+ raw.from +'"]').replace($(entry($.extend({ session: raw.from }, content, options))));
-}
+					viewer.find('[data-session="'+ raw.from +'"]').replaceWith($(entry($.extend({ session: raw.from }, options, entity))));
+				}
 			},
 			'knot.session.disconnected': function(key, content, raw) {
 				viewer.find('[data-session="'+ raw.from +'"]').remove();
