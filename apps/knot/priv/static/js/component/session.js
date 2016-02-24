@@ -31,7 +31,9 @@ $.fn.knotSession = function (options) {
 					});
 				});
 				var entity = dataStore.get(raw.from);
-				viewer.find('.'+options.iconsClass).append($(entry($.extend({ session: raw.from }, options, entity))));
+				var element = $(entry($.extend({ session: raw.from }, options, entity)));
+				identicon.update(element.find('.session-identicon')[0]);
+				viewer.find('.'+options.iconsClass).append(element);
 			},
 			'knot.session.details': function(key, content, raw) {
 				dataStore.do('self', function() {
