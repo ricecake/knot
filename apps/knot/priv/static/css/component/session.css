@@ -4,3 +4,7 @@
 	border-radius: 5%;
         width: 50%;
 }
+
+.knot-session-icon canvas.session-identicon {
+	align: left;
+}
