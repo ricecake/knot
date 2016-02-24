@@ -1,1 +1,4 @@
-<li data-session='<%= session %>' class='<%= iconClass %>'><span><%= nickname %></span></li>
+<li data-session='<%= session %>' class='knot-session-icon'>
+	<canvas class='session-identicon' width="35" height="35" data-jdenticon-hash="<%= session.replace(/-/g, '') %>"></canvas>
+	<span><%= nickname %></span>
+</li>

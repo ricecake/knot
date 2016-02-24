@@ -2,14 +2,14 @@
 	'jquery',
 	'underscore',
 	'component/datastore',
+	'lib/jdenticon-1.3.2.min',
 	'tpl!template/session',
 	'tpl!template/session-entry'
-], function($,_,KnotData,containerMarkup,entry){
+], function($,_,KnotData, identicon, containerMarkup,entry){
 'use strict';
 var defaults = {
 	sessionClass: 'knot-session-widgit',
 	iconsClass: 'knot-session-icon-container',
-	iconClass: 'knot-session-icon',
 	nickname: 'Anonymous User'
 };
 
@@ -43,10 +43,12 @@ $.fn.knotSession = function (options) {
 					$.extend(this, content);
 				});
 				var entity = dataStore.get(raw.from);
+				var element = $(entry($.extend({ session: raw.from }, options, entity)));
+				identicon.update(element.find('.session-identicon')[0]);
 				if(viewer.find('[data-session="'+ raw.from +'"]').length === 0) {
-					viewer.find('.'+options.iconsClass).append($(entry($.extend({ session: raw.from }, options, entity))));
+					viewer.find('.'+options.iconsClass).append(element);
 				} else {
-					viewer.find('[data-session="'+ raw.from +'"]').replaceWith($(entry($.extend({ session: raw.from }, options, entity))));
+					viewer.find('[data-session="'+ raw.from +'"]').replaceWith(element);
 				}
 			},
 			'knot.session.disconnected': function(key, content, raw) {
