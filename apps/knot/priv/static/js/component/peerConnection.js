@@ -24,7 +24,6 @@ peerConnectionManager.prototype.ensureSignalChannel = function(Connection) {
 	if (!conn) {
 		conn = Connection;
 		conn.addEventHandlers({
-			'#': function(key) { console.log(key) },
 			'knot.peerconnection.join': function(key, content, raw) {
 				hangup(raw.from);
 				if(initiator(raw.from)) {
