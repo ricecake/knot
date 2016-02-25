@@ -14,7 +14,9 @@ $(document).ready(function(){
 		url: '/ws/',
 		onOpen: function() {
 			if (needsSetup) {
-				connection.send('knot.session.join', { channel: $('#knot-channel-name').val() });
+				connection.send('knot.session.join', {
+					channel: $('#knot-channel-name').val()
+				});
 				$('#knot-chat').knotChat({
 					connection: connection
 				});
