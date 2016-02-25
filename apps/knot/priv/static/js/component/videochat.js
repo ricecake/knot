@@ -47,8 +47,6 @@ $.fn.knotVideoChat = function (options) {
 			}, function(session, initiator){
 				hangup(session);
 			});
-			pcm.ensureSignalChannel(conn);
-			pcm.ready();
 		}, function (e) {
 			window.console.log(e);
 		});
