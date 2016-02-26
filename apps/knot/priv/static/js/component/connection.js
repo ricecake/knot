@@ -28,10 +28,14 @@
  */
 
 var defaults = {
+	url: '/ws/',
 	eventHandlers: {
 		'ping': function() {
 			this.send('pong', null);
 		}
+	},
+	connector: function(options) {
+		return new WebSocket(options.url);
 	}
 };
 
@@ -39,22 +43,26 @@ var KnotConn = function (options) {
 	options = _.extend({}, defaults, options);
 	this.eventHandlers = { value: [], tree: {} };
 	this.addEventHandlers(options.eventHandlers);
-	var websocketUrl = url(options.url);
-	this.connect(websocketUrl, options);
+	options.url = url(options.url);
+	if (options.connection) {
+		this.connection = options.connection;
+	} else {
+		this.connect(options);
+	}
 	return this;
 };
 
-KnotConn.prototype.connect = function(websocketUrl, options) {
+KnotConn.prototype.connect = function(options) {
 	var object = this;
-	if (this.WebSocket != undefined) {
-		this.WebSocket.close();
+	if (this.connection != undefined) {
+		this.connection.close();
 	}
-	this.WebSocket = new WebSocket(websocketUrl);
-	this.WebSocket.onopen = options.onOpen;
-	this.WebSocket.onmessage = this._messageHandler.bind(this);
-	this.WebSocket.onclose = function(){
+	this.connection = options.connector(options);
+	this.connection.onopen = options.onOpen;
+	this.connection.onmessage = this._messageHandler.bind(this);
+	this.connection.onclose = function(){
 		setTimeout(function(){
-			object.connect(websocketUrl, options);
+			object.connect(options);
 		}, 10000);
 	};
 	return this;
@@ -132,7 +140,7 @@ KnotConn.prototype.send = function(key, content, extra) {
 		'content': content
 	});
 	var message = JSON.stringify(data);
-	this.WebSocket.send(message);
+	this.connection.send(message);
 	return this;
 }
 
