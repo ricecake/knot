@@ -44,7 +44,7 @@ peerConnectionManager.prototype.ensureSignalChannel = function(Connection) {
 				hangup(raw.from);
 				if(initiator(raw.from)) {
 					rtcHandshake(raw.from);
-				} else {
+				} else if (dataStore.get('self').id !== raw.from) {
 					conn.send('knot.peerconnection.join', {}, { to: raw.from });
 				}
 			},
