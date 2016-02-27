@@ -21,34 +21,37 @@ $.fn.knotVideoChat = function (options) {
 	return $(this).each(function() {
 		var container = $(containerMarkup(options));
 		$(this).append(container);
+		var pcm = new peerManager(function(session, Peer, initiator){
+			hangup(session);
+			Peer.addStream(localStream);
+			Peer.onaddstream = function (event) {
+				var remoteElement = $(remoteMarkup());
+				container.find('.main').toggleClass('main pip');
+				$(container).find('.video-container').append(remoteElement);
+				remoteElements[session] = remoteElement;
+				var remoteVideoElement = remoteElement[0];
+				window.attachMediaStream(remoteVideoElement, event.stream);
+				// This is just for dev debugging of styles.
+				//for(var i=0; i<5; i++) {
+				//	var remoteElement = $(remoteMarkup());
+				//	remoteElement.toggleClass('main pip');
+				//	$(container).find('.video-container').append(remoteElement);
+				//	window.attachMediaStream(remoteElement[0], event.stream);
+				//}
+			};
+		}, function(session, initiator){
+			hangup(session);
+		});
+		pcm.wait('videochat');
+
 		window.getUserMedia({ audio: true, video: true }, function (stream) {
 			var localVideo = container.find('.local-video')[0];
 			localStream = stream;
 			window.attachMediaStream(localVideo, localStream);
-
-			var pcm = new peerManager(function(session, Peer, initiator){
-				hangup(session);
-				Peer.addStream(localStream);
-				Peer.onaddstream = function (event) {
-					var remoteElement = $(remoteMarkup());
-					container.find('.main').toggleClass('main pip');
-					$(container).find('.video-container').append(remoteElement);
-					remoteElements[session] = remoteElement;
-					var remoteVideoElement = remoteElement[0];
-					window.attachMediaStream(remoteVideoElement, event.stream);
-					// This is just for dev debugging of styles.
-					//for(var i=0; i<5; i++) {
-					//	var remoteElement = $(remoteMarkup());
-					//	remoteElement.toggleClass('main pip');
-					//	$(container).find('.video-container').append(remoteElement);
-					//	window.attachMediaStream(remoteElement[0], event.stream);
-					//}
-				};
-			}, function(session, initiator){
-				hangup(session);
-			});
+			pcm.ready('videochat');
 		}, function (e) {
 			window.console.log(e);
+			pcm.ready('videochat');
 		});
 
 	});
