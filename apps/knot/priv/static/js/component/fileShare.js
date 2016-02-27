@@ -30,7 +30,7 @@ var pcm = new peerManager(function(session, Peer, initiator) {
 					}, 2500);
 				}
 			},
-			onClose: undefined
+			onClose: function(){}
 		});
 	}
 	Peer.ondatachannel = function(event) {
@@ -50,7 +50,7 @@ var pcm = new peerManager(function(session, Peer, initiator) {
 					}, 2500);
 				}
 			},
-			onClose: undefined
+			onClose: function(){}
 		});
 	};
 });
