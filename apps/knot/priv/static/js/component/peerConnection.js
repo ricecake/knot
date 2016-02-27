@@ -6,18 +6,34 @@
 
 var conn;
 var peerConnections = {};
-var dataStore = new KnotData;
+var lock = {};
 var onSetup = [];
 var onClose = [];
+var dataStore = new KnotData;
 
 var peerConnectionManager = function (setup, close) {
-	onSetup.push(setup);
-	onClose.push(close);
+	if (setup) {
+		onSetup.push(setup);
+	};
+	if (close) {
+		onClose.push(close);
+	}
 	return this;
 };
 
-peerConnectionManager.prototype.ready = function() {
+peerConnectionManager.prototype.getPeer = function(PeerID) {
+	return peerConnections[PeerID];
+};
+
+peerConnectionManager.prototype.wait = function(LockName) {
+	return lock[LockName] = true;
+}
+
+peerConnectionManager.prototype.ready = function(LockName) {
+	delete lock[LockName];
+	if(Object.keys(lock).length === 0) {
 		conn.send('knot.peerconnection.join', {});
+	}
 };
 
 peerConnectionManager.prototype.ensureSignalChannel = function(Connection) {
@@ -28,6 +44,8 @@ peerConnectionManager.prototype.ensureSignalChannel = function(Connection) {
 				hangup(raw.from);
 				if(initiator(raw.from)) {
 					rtcHandshake(raw.from);
+				} else {
+					conn.send('knot.peerconnection.join', {}, { to: raw.from });
 				}
 			},
 			'knot.peerconnection.offer': function(key, content, raw) {
@@ -52,7 +70,7 @@ peerConnectionManager.prototype.ensureSignalChannel = function(Connection) {
 };
 
 function initiator(them) {
-	return !(dataStore.get('self').id === them);
+	return dataStore.get('self').id > them;
 }
 
 function hangup(session) {
@@ -96,6 +114,7 @@ function rtcHandshake(session, content) {
 	for (var callback in onSetup) {
 		onSetup[callback](session, peerConnection, initiator(session));
 	}
+
 	if (typeof content === 'undefined') {
 		peerConnection.createOffer(function (desc) {
 			peerConnection.setLocalDescription(desc, function () {
