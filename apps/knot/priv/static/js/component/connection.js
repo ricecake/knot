@@ -36,6 +36,12 @@ var defaults = {
 	},
 	connector: function(options) {
 		return new WebSocket(options.url);
+	},
+	onClose: function(){
+		var object = this;
+		setTimeout(function(){
+			object.connect(object.options);
+		}, 10000);
 	}
 };
 
@@ -49,22 +55,18 @@ var KnotConn = function (options) {
 	} else {
 		this.connect(options);
 	}
+	this.options = options;
 	return this;
 };
 
 KnotConn.prototype.connect = function(options) {
-	var object = this;
 	if (this.connection != undefined) {
 		this.connection.close();
 	}
 	this.connection = options.connector(options);
 	this.connection.onopen = options.onOpen;
 	this.connection.onmessage = this._messageHandler.bind(this);
-	this.connection.onclose = function(){
-		setTimeout(function(){
-			object.connect(options);
-		}, 10000);
-	};
+	this.connection.onclose = options.onClose.bind(this);
 	return this;
 };
 
