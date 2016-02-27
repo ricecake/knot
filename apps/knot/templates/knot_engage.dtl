@@ -25,6 +25,10 @@
 		    <div class="col s6">
 			    <div id="knot-session"></div>
 		    </div>
+		    <div class="col s6">
+			    <div id="knot-filseshare"></div>
+		    </div>
+
 		</div>
 	</div>
 </div>
