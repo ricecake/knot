@@ -5,12 +5,14 @@
 	'component/chat',
 	'component/groupedit',
 	'component/session',
-	'component/videochat'
+	'component/videochat',
+	'component/fileShare'
 ], function($, KnotConn, peerManager){
 'use strict';
 var needsSetup = true;
-var pcm = new peerManager(function(session, Peer, initiator){}, function(session, initiator){});
+var pcm = new peerManager();
 
+pcm.wait('load');
 
 $(document).ready(function(){
         var connection = new KnotConn({
@@ -35,8 +37,11 @@ $(document).ready(function(){
 				$('#knot-session').knotSession({
 					connection: connection
 				});
+				$('#knot-fileshare').knotFileShare({
+					connection: connection
+				});
 
-				pcm.ready();
+				pcm.ready('load');
 			}
 		}
 	});
