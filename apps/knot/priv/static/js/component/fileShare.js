@@ -10,47 +10,44 @@ var defaults = {
 };
 
 var pcm = new peerManager(function(session, Peer, initiator) {
-	//if(initiator) {
-	//	var dc = new KnotConn({
-	//		connector: function(options) {
-	//			return Peer.createDataChannel("myLabel");
-	//		},
-	//		onOpen: function(){
-	//			console.log("start send");
-	//			dc.send('ping', null);
-	//		},
-	//		eventHandlers: {
-	//			'ping': function() {
-	//				console.log('pong');
-	//				dc.send('pong', null);
-	//			},
-	//			'pong': function() {
-	//				console.log('ping');
-	//				dc.send('ping', null);
-	//			}
-	//		}
-	//	});
-	//}
+	if(initiator) {
+		var dc = new KnotConn({
+			connector: function(options) {
+				return Peer.createDataChannel("fileshare-negotiate");
+			},
+			onOpen: function(){
+				dc.send('knot.fileshare.ping', null);
+			},
+			eventHandlers: {
+				'knot.fileshare.ping': function() {
+					setTimeout(function(){
+						dc.send('knot.fileshare.pong', null);
+					}, 2500);
+				},
+				'knot.fileshare.pong': function() {
+					setTimeout(function(){
+						dc.send('knot.fileshare.ping', null);
+					}, 2500);
+				}
+			}
+		});
+	}
 	Peer.ondatachannel = function(event) {
-		new KnotConn({
+		var dc = new KnotConn({
 			connector: function(options) {
 				return event.channel;
 			},
-			onOpen: function() {
-				console.log("Start get");
-			},
 			eventHandlers: {
-				'ping': function() {
-					console.log('pong');
-					dc.send('pong', null);
+				'knot.fileshare.ping': function() {
+					setTimeout(function(){
+						dc.send('knot.fileshare.pong', null);
+					}, 2500);
 				},
-				'pong': function() {
-					console.log('ping');
-					dc.send('ping', null);
+				'knot.fileshare.pong': function() {
+					setTimeout(function(){
+						dc.send('knot.fileshare.ping', null);
+					}, 2500);
 				}
-			},
-			onClose: function() {
-				console.log("closed");
 			}
 		});
 	};
