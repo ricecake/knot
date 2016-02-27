@@ -1,72 +1,69 @@
 ;define([
 	'jquery',
+	'KnotConn',
 	'component/peerConnection'
-], function($,KnotData,peerManager){
+], function($, KnotConn, peerManager){
 'use strict';
 
 var conn;
 var defaults = {
 };
 
+var pcm = new peerManager(function(session, Peer, initiator) {
+	//if(initiator) {
+	//	var dc = new KnotConn({
+	//		connector: function(options) {
+	//			return Peer.createDataChannel("myLabel");
+	//		},
+	//		onOpen: function(){
+	//			console.log("start send");
+	//			dc.send('ping', null);
+	//		},
+	//		eventHandlers: {
+	//			'ping': function() {
+	//				console.log('pong');
+	//				dc.send('pong', null);
+	//			},
+	//			'pong': function() {
+	//				console.log('ping');
+	//				dc.send('ping', null);
+	//			}
+	//		}
+	//	});
+	//}
+	Peer.ondatachannel = function(event) {
+		new KnotConn({
+			connector: function(options) {
+				return event.channel;
+			},
+			onOpen: function() {
+				console.log("Start get");
+			},
+			eventHandlers: {
+				'ping': function() {
+					console.log('pong');
+					dc.send('pong', null);
+				},
+				'pong': function() {
+					console.log('ping');
+					dc.send('ping', null);
+				}
+			},
+			onClose: function() {
+				console.log("closed");
+			}
+		});
+	};
+});
+
+
 $.fn.knotFileShare = function (options) {
 	options = $.extend({}, defaults, options);
 	conn = options.connection;
 
+
 	return $(this).each(function() {
-	var pcm = new peerManager(function(session, Peer, initiator) {
-		if(initiator) {
-			var dataChannel = Peer.createDataChannel("myLabel");
-			dataChannel.onerror = function (error) {
-				console.log('error', dataChannel);
-				console.log("Data Channel Error:", error);
-			};
-
-			dataChannel.onmessage = function (event) {
-				console.log('message', dataChannel);
-				console.log("Got Data Channel Message:", event.data);
-				dataChannel.send("Hello World!");
-			};
-
-			dataChannel.onopen = function () {
-				console.log('open', dataChannel);
-				dataChannel.send("Hello World!");
-			};
-
-			dataChannel.onclose = function () {
-				console.log('close', dataChannel);
-				console.log("The Data Channel is Closed");
-			};
-		}
-
-		Peer.ondatachannel = function(event) {
-			var dataChannel = event.channel;
-			dataChannel.onerror = function (error) {
-				console.log('error', dataChannel);
-				console.log("Data Channel Error:", error);
-			};
-
-			dataChannel.onmessage = function (event) {
-				console.log('message', dataChannel);
-				console.log("Got Data Channel Message:", event.data);
-				dataChannel.send("Hello World!");
-			};
-
-			dataChannel.onopen = function () {
-				console.log('open', dataChannel);
-				dataChannel.send("Hello World!");
-			};
-
-			dataChannel.onclose = function () {
-				console.log('close', dataChannel);
-				console.log("The Data Channel is Closed");
-			};
-		};
-
-	}, function(session, initiator){
 	});
-	pcm.ensureSignalChannel(conn);
-	pcm.ready();
-	});
+
 };
-
 });
