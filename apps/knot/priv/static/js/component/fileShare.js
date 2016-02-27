@@ -29,7 +29,8 @@ var pcm = new peerManager(function(session, Peer, initiator) {
 						dc.send('knot.fileshare.ping', null);
 					}, 2500);
 				}
-			}
+			},
+			onClose: undefined
 		});
 	}
 	Peer.ondatachannel = function(event) {
@@ -48,7 +49,8 @@ var pcm = new peerManager(function(session, Peer, initiator) {
 						dc.send('knot.fileshare.ping', null);
 					}, 2500);
 				}
-			}
+			},
+			onClose: undefined
 		});
 	};
 });
