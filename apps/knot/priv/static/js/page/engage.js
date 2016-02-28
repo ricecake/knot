@@ -37,9 +37,9 @@ $(document).ready(function(){
 				$('#knot-session').knotSession({
 					connection: connection
 				});
-				$('#knot-fileshare').knotFileShare({
-					connection: connection
-				});
+				//$('#knot-fileshare').knotFileShare({
+				//	connection: connection
+				//});
 
 				pcm.ready('load');
 			}
