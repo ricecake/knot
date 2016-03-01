@@ -33,15 +33,15 @@ $(document).ready(function(){
 				$('#knot-video').knotVideoChat({
 					connection: connection
 				});
-				//$('#knot-fileshare').knotWhiteBoard({
+				//$('#knot-whiteboard').knotWhiteBoard({
 				//	connection: connection
 				//});
 				$('#knot-session').knotSession({
 					connection: connection
 				});
-				//$('#knot-fileshare').knotFileShare({
-				//	connection: connection
-				//});
+				$('#knot-fileshare').knotFileShare({
+					connection: connection
+				});
 
 				pcm.ready('load');
 			}
