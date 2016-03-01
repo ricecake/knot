@@ -29,6 +29,7 @@
 
 var defaults = {
 	url: '/ws/',
+	traits: {},
 	eventHandlers: {
 		'ping': function() {
 			this.send('pong', null);
@@ -138,7 +139,7 @@ KnotConn.prototype._messageHandler = function(event) {
 }
 
 KnotConn.prototype.send = function(key, content, extra) {
-	var data = _.extend({}, extra, {
+	var data = _.extend({}, this.traits, extra, {
 		'type': key,
 		'content': content
 	});
