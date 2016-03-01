@@ -65,7 +65,7 @@ KnotConn.prototype.connect = function(options) {
 		this.connection.close();
 	}
 	this.connection = options.connector(options);
-	this.connection.onopen = options.onOpen;
+	this.connection.onopen = options.onOpen.bind(this);
 	this.connection.onmessage = this._messageHandler.bind(this);
 	this.connection.onclose = options.onClose.bind(this);
 	return this;
