@@ -20,17 +20,20 @@ var pcm = new peerManager(function(session, Peer, initiator) {
 			},
 			eventHandlers: {
 				'knot.fileshare.ping': function() {
-					setTimeout(function(){
+					this.state.ping = setTimeout(function(){
 						dc.send('knot.fileshare.pong', null);
 					}, 2500);
 				},
 				'knot.fileshare.pong': function() {
-					setTimeout(function(){
+					this.state.pong = setTimeout(function(){
 						dc.send('knot.fileshare.ping', null);
 					}, 2500);
 				}
 			},
-			onClose: function(){}
+			onClose: function(){
+				clearTimeout(this.state.ping);
+				clearTimeout(this.state.pong);
+			}
 		});
 	}
 	Peer.ondatachannel = function(event) {
@@ -40,17 +43,20 @@ var pcm = new peerManager(function(session, Peer, initiator) {
 			},
 			eventHandlers: {
 				'knot.fileshare.ping': function() {
-					setTimeout(function(){
+					this.state.ping = setTimeout(function(){
 						dc.send('knot.fileshare.pong', null);
 					}, 2500);
 				},
 				'knot.fileshare.pong': function() {
-					setTimeout(function(){
+					this.state.pong = setTimeout(function(){
 						dc.send('knot.fileshare.ping', null);
 					}, 2500);
 				}
 			},
-			onClose: function(){}
+			onClose: function(){
+				clearTimeout(this.state.ping);
+				clearTimeout(this.state.pong);
+			}
 		});
 	};
 });

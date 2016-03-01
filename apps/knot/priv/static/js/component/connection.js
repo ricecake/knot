@@ -56,6 +56,7 @@ var KnotConn = function (options) {
 		this.connect(options);
 	}
 	this.options = options;
+	this.state = {};
 	return this;
 };
 
