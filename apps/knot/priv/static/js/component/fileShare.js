@@ -1,8 +1,10 @@
 ;define([
 	'jquery',
 	'KnotConn',
-	'component/peerConnection'
-], function($, KnotConn, peerManager){
+	'component/peerConnection',
+	'tpl!template/fileShareWidget',
+	'tpl!template/fileShareEntry'
+], function($, KnotConn, peerManager, containerMarkup, entryMarkup){
 'use strict';
 
 var conn;
@@ -65,11 +67,11 @@ var pcm = new peerManager(function(session, Peer, initiator) {
 
 $.fn.knotFileShare = function (options) {
 	options = $.extend({}, defaults, options);
-	conn = options.connection;
-
 
 	return $(this).each(function() {
-		console.log(peerRouters);
+		console.log("Test");
+		var container = $(containerMarkup(options));
+		$(this).append(container);
 	});
 
 };
