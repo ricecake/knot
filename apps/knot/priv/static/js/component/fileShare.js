@@ -75,4 +75,10 @@ $.fn.knotFileShare = function (options) {
 	});
 
 };
+
+$(document).on('change', '.knot-file-select', function() {
+	console.log(this.files);
+});
+
+
 });
