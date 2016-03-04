@@ -32,7 +32,7 @@ peerConnectionManager.prototype.wait = function(LockName) {
 peerConnectionManager.prototype.ready = function(LockName) {
 	delete lock[LockName];
 	if(Object.keys(lock).length === 0) {
-		conn.send('knot.peerconnection.join', {});
+		conn.send('knot.peerconnection.join', null);
 	}
 };
 
@@ -45,7 +45,7 @@ peerConnectionManager.prototype.ensureSignalChannel = function(Connection) {
 				if(initiator(raw.from)) {
 					rtcHandshake(raw.from);
 				} else if (dataStore.get('self').id !== raw.from) {
-					conn.send('knot.peerconnection.join', {}, { to: raw.from });
+					conn.send('knot.peerconnection.join', null, { to: raw.from });
 				}
 			},
 			'knot.peerconnection.offer': function(key, content, raw) {

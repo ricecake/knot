@@ -22,14 +22,16 @@ $.fn.knotSession = function (options) {
 		$(this).append(viewer);
 		conn.addEventHandlers({
 			'knot.session.join': function(key, content, raw){
-				dataStore.do(raw.from, function() {
-					$.extend(this, content);
-				});
-				dataStore.do('self', function() {
-					conn.send('knot.session.data.update', _.omit(this, 'id'), {
-						to: raw.from
+				if (dataStore.get('self').id !== raw.from) {
+					dataStore.do(raw.from, function() {
+						$.extend(this, content);
 					});
-				});
+					dataStore.do('self', function() {
+						conn.send('knot.session.data.update', _.omit(this, 'id'), {
+							to: raw.from
+						});
+					});
+				}
 				var entity = dataStore.get(raw.from);
 				var element = $(entry($.extend({ session: raw.from }, options, entity)));
 				identicon.update(element.find('.session-identicon')[0]);

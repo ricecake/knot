@@ -140,9 +140,11 @@ KnotConn.prototype._messageHandler = function(event) {
 
 KnotConn.prototype.send = function(key, content, extra) {
 	var data = _.extend({}, this.traits, extra, {
-		'type': key,
-		'content': content
+		'type': key
 	});
+	if (content) {
+		data.content = content;
+	}
 	var message = JSON.stringify(data);
 	this.connection.send(message);
 	return this;
