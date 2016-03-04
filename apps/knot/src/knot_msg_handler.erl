@@ -14,25 +14,26 @@ init(Req, Opts) ->
 	{ok, Req2, State} = initSession(Req, Opts),
 	{cowboy_websocket, Req2, State}.
 
-websocket_handle({text, JSON} = Data, Req, State) ->
-	Message = jsx:decode(JSON, [return_maps]),
+websocket_handle({binary, Blob}, Req, State) ->
+	{ok, Message} = msgpack:unpack(Blob, [{format, map}, {allow_atom, pack}]),
+	io:format("~p~n", [Message]),
 	case handle_client_task(Message, State) of
-		{reply, Data, NewState} -> {reply, {text, jsx:encode(Data)}, Req, NewState};
+		{reply, Data, NewState} -> {reply, {binary, msgpack:pack(Data, [{format, map}, {allow_atom, pack}])}, Req, NewState};
 		{ok, NewState} -> {ok, Req, NewState}
 	end;
-websocket_handle(_Frame, Req, State) ->
+websocket_handle(Frame, Req, State) ->
+	io:format("~p~n", [Frame]),
 	{ok, Req, State}.
 
 websocket_info({send, Message}, Req, State) ->
-	{reply, {text, Message}, Req, State};
+	{reply, {binary, Message}, Req, State};
 websocket_info(Message, Req, State) ->
 	{reply, Message, Req, State}.
 
 terminate(_, Req, #{ channel := Channel, sessionid := UID } = State) ->
 	pubsub:publish(Channel, <<"knot.session.disconnected">>, #{
 		from => UID,
-		type => <<"knot.session.disconnected">>,
-		content => #{}
+		type => <<"knot.session.disconnected">>
 	}),
 	{ok, Req, State};
 terminate(_, Req, State) ->
@@ -44,7 +45,8 @@ terminate(_, Req, State) ->
 %% ------------------------------------------------------------------
 
 send(Handler, Message) when is_map(Message) ->
-	Handler ! {send, jsx:encode(Message)},
+	io:format("~p~n", [{Message, base64:encode(msgpack:pack(Message, [{format, map}, {allow_atom, pack}]))}]),
+	Handler ! {send, msgpack:pack(Message, [{format, map}, {allow_atom, pack}])},
 	ok.
 
 

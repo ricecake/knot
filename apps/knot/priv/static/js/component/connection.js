@@ -1,12 +1,12 @@
 ;(function(root, factory){
 	if (typeof define === 'function' && define.amd) {
-		define(['underscore'], factory);
+		define(['underscore', 'msgpack'], factory);
 	} else if (typeof exports === 'object') {
-		module.exports = factory(require('underscore'));
+		module.exports = factory(require('underscore'), require('msgpack'));
 	} else {
-		root.KnotConn = factory(root._);
+		root.KnotConn = factory(root._, root.msgpack);
 	}
-}(this, function(_){
+}(this, function(_, msgpack){
 'use strict';
 
 
@@ -36,7 +36,9 @@ var defaults = {
 		}
 	},
 	connector: function(options) {
-		return new WebSocket(options.url);
+		var socket = new WebSocket(options.url);
+		socket.binaryType = 'arraybuffer';
+		return socket;
 	},
 	onClose: function(){
 		var object = this;
@@ -60,6 +62,9 @@ var KnotConn = function (options) {
 	this.state = {};
 	return this;
 };
+
+KnotConn.prototype.encode = msgpack.encode;
+KnotConn.prototype.decode = msgpack.decode;
 
 KnotConn.prototype.connect = function(options) {
 	if (this.connection != undefined) {
@@ -132,7 +137,10 @@ KnotConn.prototype.trigger = function(key, content, decoded) {
 
 KnotConn.prototype._messageHandler = function(event) {
 	var type, content;
-	var decoded = JSON.parse(event.data);
+	var data = new Uint8Array(event.data);
+	console.log(data);
+	var decoded = this.decode(data);
+	console.log(decoded);
 	type = decoded.type;
 	content = decoded.content;
 	this.trigger(type, content, decoded);
@@ -145,8 +153,9 @@ KnotConn.prototype.send = function(key, content, extra) {
 	if (content) {
 		data.content = content;
 	}
-	var message = JSON.stringify(data);
-	this.connection.send(message);
+	var message = this.encode(data);
+	console.log(data, message);
+	this.connection.send(message, { binary: true });
 	return this;
 }
 

@@ -55,6 +55,7 @@ peerConnectionManager.prototype.ensureSignalChannel = function(Connection) {
 				peerConnections[raw.from].setRemoteDescription(new window.RTCSessionDescription(content));
 			},
 			'knot.peerconnection.icecandidate': function(key, content, raw) {
+				console.log(content);
 				var icecandidate = new window.RTCIceCandidate({
 					sdpMLineIndex: content.sdpMLineIndex,
 					candidate: content.candidate
