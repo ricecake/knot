@@ -4,6 +4,7 @@ requirejs.config({
 		jquery: 'lib/jquery-2.1.1.min',
 		underscore: 'lib/underscore-min',
 		KnotConn: 'component/connection',
+		msgpack: 'lib/msgpack.min',
 		text: 'lib/text',
 		tpl: 'lib/tpl',
 		template: '../template',
