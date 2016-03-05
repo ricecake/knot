@@ -69,7 +69,6 @@ $.fn.knotFileShare = function (options) {
 	options = $.extend({}, defaults, options);
 
 	return $(this).each(function() {
-		console.log("Test");
 		var container = $(containerMarkup(options));
 		$(this).append(container);
 	});
