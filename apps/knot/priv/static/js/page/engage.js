@@ -33,9 +33,9 @@ $(document).ready(function(){
 				$('#knot-video').knotVideoChat({
 					connection: connection
 				});
-				//$('#knot-whiteboard').knotWhiteBoard({
-				//	connection: connection
-				//});
+				$('#knot-whiteboard').knotWhiteBoard({
+					connection: connection
+				});
 				$('#knot-session').knotSession({
 					connection: connection
 				});
