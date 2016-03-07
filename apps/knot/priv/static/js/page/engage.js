@@ -6,6 +6,7 @@
 	'component/groupedit',
 	'component/session',
 	'component/videochat',
+	'component/whiteboard',
 	'component/fileShare'
 ], function($, KnotConn, peerManager){
 'use strict';
