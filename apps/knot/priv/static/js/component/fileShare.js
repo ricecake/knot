@@ -76,7 +76,22 @@ $.fn.knotFileShare = function (options) {
 };
 
 $(document).on('change', '.knot-file-select', function() {
-	console.log(this.files);
+	for (var i = 0; i < this.files.length; i++) {
+		var file = this.files[i];
+
+		sharedFilesLocal[file.name] = file;
+
+		for (var peer in peerRouters) {
+			console.log(newEntry);
+			peerRouters[peer].send('knot.fileshare.announce', {
+				name: file.name,
+				size: file.size,
+				type: file.type,
+				lastModified: file.lastModified
+			});
+		}
+
+	}
 });
 
 
