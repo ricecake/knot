@@ -30,8 +30,7 @@ var pcm = new peerManager(function(session, Peer, initiator) {
 				}.bind(this), 2500);
 			},
 			'knot.fileshare.announce': function(key, content, raw) {
-				sharedFilesRemote[session] = sharedFilesRemote[session] || {};
-				sharedFilesRemote[session] = $.extend({}, sharedFilesRemote[session], content);
+				sharedFilesRemote[session] = $.extend({}, content);
 				console.log(sharedFilesRemote);
 			}
 		},
@@ -39,7 +38,8 @@ var pcm = new peerManager(function(session, Peer, initiator) {
 			if(initiator) {
 				this.send('knot.fileshare.ping', null);
 			}
-			this.send('knot.fileshare.announce', sharedFilesLocal);
+			var manifest = generateShareManifest();
+			this.send('knot.fileshare.announce', manifest);
 		},
 		onClose: function(){
 			clearTimeout(this.state.ping);
@@ -78,21 +78,25 @@ $.fn.knotFileShare = function (options) {
 $(document).on('change', '.knot-file-select', function() {
 	for (var i = 0; i < this.files.length; i++) {
 		var file = this.files[i];
-
 		sharedFilesLocal[file.name] = file;
-
-		for (var peer in peerRouters) {
-			console.log(newEntry);
-			peerRouters[peer].send('knot.fileshare.announce', {
-				name: file.name,
-				size: file.size,
-				type: file.type,
-				lastModified: file.lastModified
-			});
-		}
-
+	}
+	var manifest = generateShareManifest();
+	for (var peer in peerRouters) {
+		peerRouters[peer].send('knot.fileshare.announce', manifest);
 	}
 });
 
+function generateShareManifest() {
+	var manifest = {};
+	for (var key in sharedFilesLocal) {
+		manifest[key] = {
+			name: sharedFilesLocal[key].name,
+			size: sharedFilesLocal[key].size,
+			type: sharedFilesLocal[key].type,
+			lastModified: sharedFilesLocal[key].lastModified
+		};
+	}
+	return manifest;
+}
 
 });
