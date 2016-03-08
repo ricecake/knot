@@ -9,6 +9,7 @@
 
 var conn;
 var defaults = {
+	remote: false
 };
 
 var peerRouters = {};
@@ -17,6 +18,10 @@ var sharedFilesLocal = {};
 var sharedFilesRemote = {};
 
 var pcm = new peerManager(function(session, Peer, initiator) {
+	var sessionDefaults = $.extend({}, defaults, {
+		session: session,
+		remote: true
+	});
 	var commonArgs = {
 		eventHandlers: {
 			'knot.fileshare.ping': function() {
@@ -30,8 +35,16 @@ var pcm = new peerManager(function(session, Peer, initiator) {
 				}.bind(this), 2500);
 			},
 			'knot.fileshare.announce': function(key, content, raw) {
-				sharedFilesRemote[session] = $.extend({}, content);
-				console.log(sharedFilesRemote);
+				var newFileList = $.extend({}, content);
+				sharedFilesRemote[session] = newFileList;
+				$('.knot-fileshare-container .knot-files-remote').each(function() {
+					$(this).find('[data-session="'+ session +'"]').remove();
+					for (var key in content) {
+						var args = $.extend({}, sessionDefaults, content[key]);
+						var container = $(entryMarkup(args));
+						$(this).append(container);
+					}
+				});
 			}
 		},
 		onOpen: function(){
@@ -84,6 +97,15 @@ $(document).on('change', '.knot-file-select', function() {
 	for (var peer in peerRouters) {
 		peerRouters[peer].send('knot.fileshare.announce', manifest);
 	}
+	$('.knot-fileshare-container .knot-files-local').each(function() {
+		$(this).empty();
+		for (var key in manifest) {
+			var args = $.extend({}, defaults, manifest[key]);
+			var container = $(entryMarkup(args));
+			$(this).append(container);
+		}
+	});
+
 });
 
 function generateShareManifest() {

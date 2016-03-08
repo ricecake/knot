@@ -1,1 +1,11 @@
-<div class='knot-file'></div>
+<div class='knot-file' <% if(remote) { %> data-session='<%= session %>' <% } %> data-name='<%= name %>'>
+	Name: <%= name %>
+	Size: <%= size %>
+	Type: <%= type %>
+	Changed: <%= lastModified %>
+	<% if(remote) { %>
+	<a class='knot-file-download'>Download</a>
+	<% } else { %>
+	<a class='knot-file-remove'>Remove</a>
+	<% } %>
+</div>
