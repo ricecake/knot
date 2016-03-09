@@ -74,11 +74,16 @@ var pcm = new peerManager(function(session, Peer, initiator) {
 		}));
 	}
 	Peer.ondatachannel = function(event) {
-		peerRouters[session] = new KnotConn($.extend({}, commonArgs, {
-			connector: function(options) {
-				return event.channel;
-			},
-		}));
+		var channel = event.channel;
+		if(channel.label === "fileshare-negotiate") {
+			peerRouters[session] = new KnotConn($.extend({}, commonArgs, {
+				connector: function(options) {
+					return channel;
+				},
+			}));
+		} else {
+
+		}
 	};
 });
 
