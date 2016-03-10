@@ -22,6 +22,18 @@ var pcm = new peerManager(function(session, Peer, initiator) {
 		session: session,
 		remote: true
 	});
+	var maybeInitiateSession = function(Args) {
+		if(initiator) {
+			peerRouters[session] = new KnotConn($.extend({}, Args, {
+				connector: function(options) {
+					return Peer.createDataChannel("fileshare-negotiate", {
+						ordered: true,
+						reliable: true
+					});
+				},
+			}));
+		}
+	};
 	var commonArgs = {
 		eventHandlers: {
 			'knot.fileshare.ping': function() {
@@ -50,9 +62,29 @@ var pcm = new peerManager(function(session, Peer, initiator) {
 				var fileName = content.name;
 				$('.knot-fileshare-container .knot-files-remote [data-session="'+ session +'"][data-name="'+ fileName +'"]').remove();
 				delete sharedFilesRemote[session][fileName];
+			},
+			'knot.fileshare.request': function(key, content) {
+				var fileReader = new FileReader();
+				console.log(content);
+				fileReader.onload = function(dataEvent) {
+					console.log(dataEvent);
+					var shareChannel = Peer.createDataChannel(content.name, {
+						ordered: true,
+						reliable: true
+					});
+					shareChannel.onopen = function() {
+						console.log("sending");
+						shareChannel.send(dataEvent.target.result);
+						shareChannel.close();
+					}
+				};
+				fileReader.readAsDataURL(sharedFilesLocal[content.name]);
 			}
 		},
 		onOpen: function(){
+			this.connection.onerror = function(e) {
+				console.log(e);
+			};
 			if(initiator) {
 				this.send('knot.fileshare.ping', null);
 			}
@@ -63,16 +95,13 @@ var pcm = new peerManager(function(session, Peer, initiator) {
 			clearTimeout(this.state.ping);
 			clearTimeout(this.state.pong);
 			delete peerRouters[session];
+			console.log("Closing", this.connection.label);
+			//if(Peer.signalingState !== 'disconnected') {
+			//	maybeInitiateSession(commonArgs);
+			//}
 		}
 	};
 
-	if(initiator) {
-		peerRouters[session] = new KnotConn($.extend({}, commonArgs, {
-			connector: function(options) {
-				return Peer.createDataChannel("fileshare-negotiate");
-			},
-		}));
-	}
 	Peer.ondatachannel = function(event) {
 		var channel = event.channel;
 		if(channel.label === "fileshare-negotiate") {
@@ -82,9 +111,17 @@ var pcm = new peerManager(function(session, Peer, initiator) {
 				},
 			}));
 		} else {
-
+			channel.onmessage = function(msg) {
+				console.log(channel.label, msg);
+				var link = document.createElement("a");
+				link.download = channel.label;
+				link.href = msg.data;
+				link.click();
+			}
 		}
 	};
+
+	maybeInitiateSession(commonArgs);
 });
 
 
@@ -129,6 +166,9 @@ $(document).on('click', '.knot-file-remove', function(){
 });
 
 $(document).on('click', '.knot-file-download', function(){
+	var fileName = $(this).parent().data('name');
+	var session  = $(this).parent().data('session');
+	peerRouters[session].send('knot.fileshare.request', { name: fileName });
 });
 
 
