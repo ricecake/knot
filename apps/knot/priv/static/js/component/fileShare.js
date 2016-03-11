@@ -64,21 +64,27 @@ var pcm = new peerManager(function(session, Peer, initiator) {
 				delete sharedFilesRemote[session][fileName];
 			},
 			'knot.fileshare.request': function(key, content) {
-				var fileReader = new FileReader();
-				console.log(content);
-				fileReader.onload = function(dataEvent) {
-					console.log(dataEvent);
-					var shareChannel = Peer.createDataChannel(content.name, {
-						ordered: true,
-						reliable: true
-					});
-					shareChannel.onopen = function() {
-						console.log("sending");
-						shareChannel.send(dataEvent.target.result);
-						shareChannel.close();
-					}
+				var file = sharedFilesLocal[content.name];
+				var chunkSize = 4096;
+				var shareChannel = Peer.createDataChannel(content.name, {
+					ordered: true,
+					reliable: true
+				});
+				var sliceFile = function(offset) {
+					var reader = new FileReader();
+					reader.onload = function(e) {
+						shareChannel.send(e.target.result);
+						if (file.size > offset + e.target.result.byteLength) {
+							setTimeout(sliceFile, 0, offset + chunkSize);
+						}
+					};
+					var slice = file.slice(offset, offset + chunkSize);
+					reader.readAsArrayBuffer(slice);
 				};
-				fileReader.readAsDataURL(sharedFilesLocal[content.name]);
+				shareChannel.binaryType = 'arraybuffer';
+				shareChannel.onopen = function() {
+					sliceFile(0);
+				}
 			}
 		},
 		onOpen: function(){
@@ -111,12 +117,23 @@ var pcm = new peerManager(function(session, Peer, initiator) {
 				},
 			}));
 		} else {
+			channel.binaryType = 'arraybuffer';
+			var buffer = [];
+			var size   = 0;
 			channel.onmessage = function(msg) {
-				console.log(channel.label, msg);
-				var link = document.createElement("a");
-				link.download = channel.label;
-				link.href = msg.data;
-				link.click();
+				buffer.push(msg.data);
+				size += msg.data.byteLength;
+				if(size === sharedFilesRemote[session][channel.label].size) {
+					var received = new Blob(buffer);
+					var objUrl = URL.createObjectURL(received);
+					$('.knot-fileshare-container .knot-files-remote [data-session="'+ session +'"][data-name="'+ channel.label +'"] .knot-file-download').each(function(){
+						$(this).addClass('complete')
+						this.href = objUrl;
+						this.download = channel.label;
+						$(this).text("Download File");
+					});
+					channel.close();
+				}
 			}
 		}
 	};
@@ -165,10 +182,12 @@ $(document).on('click', '.knot-file-remove', function(){
 	}
 });
 
-$(document).on('click', '.knot-file-download', function(){
+$(document).on('click', '.knot-file-download.pending', function(){
 	var fileName = $(this).parent().data('name');
 	var session  = $(this).parent().data('session');
 	peerRouters[session].send('knot.fileshare.request', { name: fileName });
+	$(this).removeClass('pending');
+	$(this).text('Transfering...');
 });
 
 
