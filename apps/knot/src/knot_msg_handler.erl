@@ -14,12 +14,10 @@ init(Req, Opts) ->
 	{ok, Req2, State} = initSession(Req, Opts),
 	{cowboy_websocket, Req2, State}.
 
-websocket_handle({text, JSON} = Data, Req, State) ->
+websocket_handle({text, JSON}, Req, State) ->
 	Message = jsx:decode(JSON, [return_maps]),
-	case handle_client_task(Message, State) of
-		{reply, Data, NewState} -> {reply, {text, jsx:encode(Data)}, Req, NewState};
-		{ok, NewState} -> {ok, Req, NewState}
-	end;
+	{ok, NewState} = handle_client_task(Message, State),
+	{ok, Req, NewState};
 websocket_handle(_Frame, Req, State) ->
 	{ok, Req, State}.
 
