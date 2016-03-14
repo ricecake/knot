@@ -4,10 +4,10 @@
 	Type: <%= type %>
 	Changed: <%= lastModified %>
 	<% if(remote) { %>
-        <div class='pending'
-	        <a class='knot-file-download'>Start Transfer</a>
-	        <progress value=0 max=<%= size %> ></progress>
-        <div/>
+        <div class='knot-file-download pending'>
+	        <a class='knot-file-download-link'>Start Transfer</a>
+	        <progress class='knot-file-download-progress' value=0 max=<%= size %> ></progress>
+        </div>
 	<% } else { %>
 	<a class='knot-file-remove'>Remove</a>
 	<% } %>

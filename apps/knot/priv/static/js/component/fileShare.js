@@ -123,17 +123,19 @@ var pcm = new peerManager(function(session, Peer, initiator) {
 			channel.onmessage = function(msg) {
 				buffer.push(msg.data);
 				size += msg.data.byteLength;
-				if(size === sharedFilesRemote[session][channel.label].size) {
-					var received = new Blob(buffer);
-					var objUrl = URL.createObjectURL(received);
-					$('.knot-fileshare-container .knot-files-remote [data-session="'+ session +'"][data-name="'+ channel.label +'"] .knot-file-download').each(function(){
-						$(this).addClass('complete')
-						this.href = objUrl;
-						this.download = channel.label;
-						$(this).text("Download File");
-					});
-					channel.close();
-				}
+				$('.knot-fileshare-container .knot-files-remote [data-session="'+ session +'"][data-name="'+ channel.label +'"] .knot-file-download').each(function(){
+					$(this).find('.knot-file-download-progress').val(size);
+					if(size === sharedFilesRemote[session][channel.label].size) {
+						var received = new Blob(buffer);
+						var objUrl = URL.createObjectURL(received);
+						var link = $(this).find('.knot-file-download-link')[0];
+						$(this).addClass('complete');
+						link.href = objUrl;
+						link.download = channel.label;
+						$(link).text("Download File");
+						channel.close();
+					}
+				});
 			}
 		}
 	};
@@ -182,11 +184,11 @@ $(document).on('click', '.knot-file-remove', function(){
 	}
 });
 
-$(document).on('click', '.knot-file-download.pending', function(){
-	var fileName = $(this).parent().data('name');
-	var session  = $(this).parent().data('session');
+$(document).on('click', '.pending .knot-file-download-link', function(){
+	var fileName = $(this).closest('.knot-file').data('name');
+	var session  = $(this).closest('.knot-file').data('session');
 	peerRouters[session].send('knot.fileshare.request', { name: fileName });
-	$(this).removeClass('pending');
+	$(this).closest('.knot-file-download').removeClass('pending');
 	$(this).text('Transfering...');
 });
 
