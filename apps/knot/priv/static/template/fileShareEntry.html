@@ -1,8 +1,8 @@
 <div class='knot-file' <% if(remote) { %> data-session='<%= session %>' <% } %> data-name='<%= name %>'>
 	Name: <%= name %>
-	Size: <%= size %>
+	Size: <%= Math.round(size/(1024*1024)*100)/100 %>MB</br>
 	Type: <%= type %>
-	Changed: <%= lastModified %>
+	Last Changed: <%= new Date(lastModified).toDateString() %></br>
 	<% if(remote) { %>
         <div class='knot-file-download pending'>
 	        <a class='knot-file-download-link'>Start Transfer</a>

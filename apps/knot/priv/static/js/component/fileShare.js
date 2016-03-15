@@ -129,9 +129,9 @@ var pcm = new peerManager(function(session, Peer, initiator) {
 						var received = new Blob(buffer);
 						var objUrl = URL.createObjectURL(received);
 						var link = $(this).find('.knot-file-download-link')[0];
-						$(this).addClass('complete');
 						link.href = objUrl;
 						link.download = channel.label;
+						$(this).addClass('complete');
 						$(link).text("Download File");
 						channel.close();
 					}
