@@ -17,7 +17,7 @@ KnotData.prototype.set = function(key, value) {
 };
 
 KnotData.prototype.get = function(key) {
-	return JSON.parse(localStorage.getItem(key));
+	return JSON.parse(localStorage.getItem(key)) || {};
 };
 
 KnotData.prototype.do = function(key, callback) {

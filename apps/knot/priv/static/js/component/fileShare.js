@@ -101,7 +101,6 @@ var pcm = new peerManager(function(session, Peer, initiator) {
 			clearTimeout(this.state.ping);
 			clearTimeout(this.state.pong);
 			delete peerRouters[session];
-			console.log("Closing", this.connection.label);
 			//if(Peer.signalingState !== 'disconnected') {
 			//	maybeInitiateSession(commonArgs);
 			//}
