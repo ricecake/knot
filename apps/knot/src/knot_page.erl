@@ -8,7 +8,7 @@ init(Req, Page) ->
 		<< "knot_", PageBinary/binary, "_dtl" >>, utf8
 	),
 	{ok, Body} = Template:render([{page, PageBinary} |cowboy_req:bindings(Req)]),
-	Req2 = cowboy_req:reply(200, #{
-		<<"content-type">> => <<"text/html">>
-	}, Body, Req),
+	Req2 = cowboy_req:reply(200, [
+		{<<"content-type">>, <<"text/html">>}
+	], Body, Req),
 	{ok, Req2, Page}.
