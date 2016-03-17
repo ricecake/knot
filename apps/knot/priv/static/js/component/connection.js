@@ -10,23 +10,6 @@
 'use strict';
 
 
-//var obj = { value: [], tree: {} };
-//'a.b.c.d.e.f'.split('.').reduce(function (last, curr) {
-//  console.log(last);
-//  last.tree[curr] = { value: [], tree: {} };
-//  return last.tree[curr];
-//},obj);
-
-/*
- * Need to write some logic to implement trie behavior for matching
- * Basically: '*' matches any one label; '#' matches any number of labels
- * when a message comes in, we traverse the tree, executing callbacks in depth first pre order
- * when we hit a star in the binding, we'll need to traverse the subtree with the next label popped off,
- * regardless of what it is.
- * When we hit a hash, we'll need to do that many times, untill we've exhausted the entire routing key,
- * and then execute any callbacks bound to the hash itself.
- */
-
 var defaults = {
 	url: '/ws/',
 	traits: {},
@@ -46,6 +29,16 @@ var defaults = {
 	}
 };
 
+/** Returns a new knotConnection object.
+ *
+ * @constructor
+ *
+ * @param {Object} options - Options controlling the construction of the connection
+ * @param {Object} options.eventHandlers - Default route/callback pairs for connection
+ * @param {Function} options.onOpen - Action to take when opening connection
+ * @param {Function} options.onClose - Action to take when connection closes
+ *
+**/
 var KnotConn = function (options) {
 	options = _.extend({}, defaults, options);
 	this.eventHandlers = { value: [], tree: {} };
@@ -72,6 +65,11 @@ KnotConn.prototype.connect = function(options) {
 	return this;
 };
 
+/** Adds route handlers to an existing connection
+ *
+ * @param {Object} Handlers - An object consisting of route -> callback pairs.
+ *
+**/
 KnotConn.prototype.addEventHandlers = function(Handlers) {
 	var handlers = this.eventHandlers;
 	_.each(Handlers, function(callback, key) {
@@ -122,6 +120,13 @@ function matchingTrieNodes(Key, Trie) {
 	return callbackList;
 }
 
+/** Manually trigger a route to fire
+ *
+ * @param {String} key - The route key for event
+ * @param {Object} content - the message content
+ * @param {Object} [raw] - the "raw" decoded message
+ *
+**/
 KnotConn.prototype.trigger = function(key, content, decoded) {
 	var callbacks = matchingTrieNodes(key, this.eventHandlers);
 	var object = this;
@@ -138,6 +143,13 @@ KnotConn.prototype._messageHandler = function(event) {
 	this.trigger(type, content, decoded);
 }
 
+/** Send a message over the connection
+ *
+ * @param {String} key - message routing key
+ * @param {Object} [content] - message body
+ * @param {Object} [extra] - extra fields to set on message body
+ *
+**/
 KnotConn.prototype.send = function(key, content, extra) {
 	var data = _.extend({}, this.traits, extra, {
 		'type': key
