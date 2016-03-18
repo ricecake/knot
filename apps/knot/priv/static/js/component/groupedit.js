@@ -2,9 +2,12 @@
 	'jquery',
 	'underscore',
 	'component/treedoc',
-	'lib/codemirror'
-], function($, _, TreeDoc, CodeMirror){
+	'lib/codemirror',
+	'component/datastore',
+], function($, _, TreeDoc, CodeMirror, KnotData){
 'use strict';
+
+var dataStore = new KnotData;
 
 var defaults = {
 	modeURL: '/static/js/lib/mode/%N/%N.js',
@@ -25,16 +28,20 @@ $.fn.knotGroupEdit = function (options) {
 		//	td.insertLocal(startPos+index, item);
 		//});
 		conn.send('knot.edit.doc.update', msg);
-		return event.cancel();
+		return;
 	};
 	CodeMirror.modeURL = options.modeURL;
 	return $(this).each(function() {
 		var editor = CodeMirror(this, options.editorOptions);
 		conn.addEventHandlers({
 			'knot.edit.doc.update': function(key, event, raw){
-				editor.off('beforeChange', propagateChange)
-				editor.doc.replaceRange(event.text, event.from, event.to);
-				editor.on('beforeChange', propagateChange)
+				if (dataStore.get('self').id !== raw.from) {
+					editor.off('beforeChange', propagateChange);
+					var cursorPos = editor.doc.getCursor();
+					editor.doc.replaceRange(event.text, event.from, event.to);
+					editor.doc.setCursor(cursorPos);
+					editor.on('beforeChange', propagateChange);
+				}
 			}
 		});
 		editor.on('beforeChange', propagateChange);
