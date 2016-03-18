@@ -45,6 +45,9 @@ $.fn.knotGroupEdit = function (options) {
 			}
 		});
 		editor.on('beforeChange', propagateChange);
+		editor.on('cursorActivity', function(ed){
+			conn.send('knot.edit.cursor.move', editor.doc.getCursor());
+		});
 	});
 };
 
