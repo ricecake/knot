@@ -1,10 +1,10 @@
 ;define([
 	'jquery',
 	'underscore',
-	'component/treedoc',
+	//'component/treedoc',
 	'lib/codemirror',
 	'component/datastore',
-], function($, _, TreeDoc, CodeMirror, KnotData){
+], function($, _, /*TreeDoc,*/ CodeMirror, KnotData){
 'use strict';
 
 var dataStore = new KnotData;
@@ -20,7 +20,7 @@ var defaults = {
 $.fn.knotGroupEdit = function (options) {
 	options = $.extend({}, defaults, options);
 	var conn = options.connection;
-	var td = new TreeDoc;
+	//var td = new TreeDoc;
 	var propagateChange = function(ed, event) {
 		var msg = _.pick(event, 'from', 'to', 'text', 'origin');
 		//var startPos = ed.indexFromPos(event.from);
