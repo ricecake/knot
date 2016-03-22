@@ -3,7 +3,7 @@ requirejs.config({
 	paths: {
 		jquery: 'lib/jquery-2.1.1.min',
 		underscore: 'lib/underscore-min',
-		KnotConn: 'component/connection',
+		KnotConn: 'lib/connection',
 		text: 'lib/text',
 		tpl: 'lib/tpl',
 		template: '../template',
