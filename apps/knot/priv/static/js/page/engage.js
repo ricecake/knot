@@ -16,7 +16,7 @@ var pcm = new peerManager();
 pcm.wait('load');
 
 $(document).ready(function(){
-        var connection = new KnotConn({
+	var connection = new KnotConn({
 		url: '/ws/',
 		onOpen: function() {
 			pcm.ensureSignalChannel(connection);

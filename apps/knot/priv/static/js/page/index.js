@@ -1,4 +1,4 @@
-;define(['jquery', 'KnotConn', 	'component/datastore', 'materialize'], function($, KnotConn, KnotData){
+;define(['jquery', 'KnotConn', 'component/datastore', 'materialize'], function($, KnotConn, KnotData){
 'use strict';
 
 $(document).ready(function(){
