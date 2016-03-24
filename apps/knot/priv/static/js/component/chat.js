@@ -2,14 +2,6 @@
 'use strict';
 
 var defaults = {
-	chatClass: 'knot-chat-window',
-	dialogClass: 'knot-dialog',
-	messageClass: 'knot-chat-message',
-	inputSectionClass: 'knot-user-input',
-	inputClass: 'knot-chat-input',
-	buttonClass: 'knot-chat-send-button',
-	headerClass: 'knot-chat-header',
-	buttonText: 'Send'
 };
 
 $.fn.knotChat = function (options) {
@@ -17,9 +9,9 @@ $.fn.knotChat = function (options) {
 	return $(this).each(function() {
 		$(this).append($(containerMarkup(options)));
 		var that = $(this);
-		var dialog = that.find('.'+options.dialogClass);
+		var dialog = that.find('.knot-dialog');
 		var sendMessage = function() {
-			var $input = that.find('.'+options.inputClass)[0];
+			var $input = that.find('.knot-chat-input')[0];
 			var message = $input.value;
 			if (message !== '') {
 				options.connection.send('knot.chat.message',
@@ -35,7 +27,7 @@ $.fn.knotChat = function (options) {
 				dialog[0].scrollTop = dialog[0].scrollHeight;
 			}
 		});
-		$(this).find('.'+options.inputSectionClass).on('submit', sendMessage);
+		$(this).find('.knot-user-input').on('submit', sendMessage);
 	});
 };
 
