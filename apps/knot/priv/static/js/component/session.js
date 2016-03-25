@@ -8,8 +8,6 @@
 ], function($,_,KnotData, identicon, containerMarkup,entry){
 'use strict';
 var defaults = {
-	sessionClass: 'knot-session-widgit',
-	iconsClass: 'knot-session-icon-container',
 	nickname: 'Anonymous User'
 };
 
