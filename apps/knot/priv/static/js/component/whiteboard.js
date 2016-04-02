@@ -1,7 +1,8 @@
 ;define([
 	'jquery',
+        'underscore',
 	'tpl!template/whiteboardWidget'
-], function($,containerMarkup){
+], function($, _, containerMarkup){
 'use strict';
 
 var defaults = {
