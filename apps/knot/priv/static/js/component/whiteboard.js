@@ -1,6 +1,6 @@
 ;define([
 	'jquery',
-        'underscore',
+	'underscore',
 	'tpl!template/whiteboardWidget'
 ], function($, _, containerMarkup){
 'use strict';
@@ -12,9 +12,9 @@ var defaults = {
 
 $.fn.knotWhiteBoard = function (options) {
 	options = $.extend({}, defaults, options);
-        var conn = options.connection;
+	var conn = options.connection;
 	return $(this).each(function() {
-                conn.addEventHandlers({});
+		conn.addEventHandlers({});
 		$(this).append($(containerMarkup(options)));
 	});
 };
