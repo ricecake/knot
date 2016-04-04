@@ -12,7 +12,9 @@ var defaults = {
 
 $.fn.knotWhiteBoard = function (options) {
 	options = $.extend({}, defaults, options);
+        var conn = options.connection;
 	return $(this).each(function() {
+                conn.addEventHandlers({});
 		$(this).append($(containerMarkup(options)));
 	});
 };
