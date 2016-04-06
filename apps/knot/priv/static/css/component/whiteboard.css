@@ -4,25 +4,25 @@
 	display: inline-block;
 }
 
-#info-bar {
+.info-bar {
 	position: fixed;
 	top: 3px;
 	width: 50px;
 	left: calc(100% - 50px);
 }
 
-#controls {
+.controls {
 	bottom: 85%;
 	width: 100%;
 	height:15%;
 }
 
-#size-control {
+.size-control {
 	width: 50%;
 	display: inline-block;
 }
 
-#canvas-container {
+.canvas-container {
 	position: relative;
 	cursor: none;
 	border-bottom: 3px solid black;
@@ -38,10 +38,10 @@
 	height:100%;
 }
 
-#system-overlay {
+.system-overlay {
 	z-index: 200;
 }
 
-#canvas {
+.canvas {
 	z-index: 100;
 }
