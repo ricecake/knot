@@ -1,4 +1,9 @@
-;define(['jquery', 'tpl!template/chat','tpl!template/chat-message'], function($,containerMarkup,messageMarkup){
+;define([
+	'jquery',
+	'lib/jdenticon-1.3.2.min',
+	'tpl!template/chat',
+	'tpl!template/chat-message'
+], function($,identicon,containerMarkup,messageMarkup){
 'use strict';
 
 var defaults = {
@@ -22,8 +27,11 @@ $.fn.knotChat = function (options) {
 			return false;
 		};
 		options.connection.addEventHandlers({
-			'knot.chat.message': function(key, content){
-				dialog.append($(messageMarkup($.extend({}, content, options))));
+			'knot.chat.message': function(key, content, raw){
+				content.from = raw.from;
+				var element = $(messageMarkup($.extend({}, content, options)));
+				identicon.update(element.find('.session-identicon')[0]);
+				dialog.append(element);
 				dialog[0].scrollTop = dialog[0].scrollHeight;
 			}
 		});

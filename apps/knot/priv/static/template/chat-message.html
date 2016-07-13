@@ -1,1 +1,4 @@
-<li class='knot-chat-message'><span><%= message %></span></li>
+<li class='knot-chat-message'>
+	<canvas class='session-identicon' width="35" height="35" data-jdenticon-hash="<%= from.replace(/-/g, '') %>"></canvas>
+	<p><%= message %></p>
+</li>
