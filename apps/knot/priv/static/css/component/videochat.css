@@ -1,4 +1,4 @@
-.video-container {
+.videofeed-container {
 	height: 100%;
 	box-sizing: content-box;
 	max-height: 100vh;
@@ -9,7 +9,7 @@
 	align-items: flex-start;
 }
 
-.video-container video {
+.videofeed-container video {
 	width: 70vw;
 	max-height: 80vh;
 	max-width: 70vw;
@@ -18,14 +18,14 @@
 	z-index: 1;
 }
 
-.video-container video.pip {
+.videofeed-container video.pip {
 	box-shadow: -1px -1px 6px #000;
 	max-width: 25%;
 	flex-basis: 10%;
 	order: 1;
 }
 
-.video-container video.main {
+.videofeed-container video.main {
 	margin-top: 1em;
 	z-index: 0;
 	order: 2;

@@ -27,7 +27,7 @@ $.fn.knotVideoChat = function (options) {
 			Peer.onaddstream = function (event) {
 				var remoteElement = $(remoteMarkup());
 				container.find('.main').toggleClass('main pip');
-				$(container).find('.video-container').append(remoteElement);
+				$(container).find('.videofeed-container').append(remoteElement);
 				remoteElements[session] = remoteElement;
 				var remoteVideoElement = remoteElement[0];
 				window.attachMediaStream(remoteVideoElement, event.stream);
@@ -35,7 +35,7 @@ $.fn.knotVideoChat = function (options) {
 				//for(var i=0; i<5; i++) {
 				//	var remoteElement = $(remoteMarkup());
 				//	remoteElement.toggleClass('main pip');
-				//	$(container).find('.video-container').append(remoteElement);
+				//	$(container).find('.videofeed-container').append(remoteElement);
 				//	window.attachMediaStream(remoteElement[0], event.stream);
 				//}
 			};
@@ -57,8 +57,8 @@ $.fn.knotVideoChat = function (options) {
 	});
 };
 
-$(document).on('click', '.video-container video', function() {
-	$('.video-container video').removeClass('main').addClass('pip');
+$(document).on('click', '.videofeed-container video', function() {
+	$('.videofeed-container video').removeClass('main').addClass('pip');
 	$(this).removeClass('pip').addClass("main");
 });
 
