@@ -29,6 +29,10 @@ $.fn.knotSession = function (options) {
 							to: raw.from
 						});
 					});
+				} else {
+					dataStore.do(raw.from, function() {
+						$.extend(this, dataStore.get('self'));
+					});
 				}
 				var entity = dataStore.get(raw.from);
 				var element = $(entry($.extend({ session: raw.from }, options, entity)));
