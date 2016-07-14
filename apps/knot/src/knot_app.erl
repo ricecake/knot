@@ -20,8 +20,9 @@ start(_StartType, _StartArgs) ->
 					{"/static/[...]", cowboy_static, {priv_dir, knot, "static/"}}
 				]}
 			]),
-			{ok, _} = cowboy:start_http(http, 25, [{ip, {127,0,0,1}}, {port, 8585}],
-							[{env, [{dispatch, Dispatch}]}]),
+			{ok, _} = cowboy:start_clear(knot, 25, [{ip, {127,0,0,1}}, {port, 8585}], #{
+							env => #{ dispatch => Dispatch }
+			}),
 			{ok, Pid}
 	end.
 
