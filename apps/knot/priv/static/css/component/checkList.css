@@ -1,0 +1,3 @@
+.knot-checklist-widgit .knot-checklist-node > .knot-checklist-subnodes:empty {
+	display: none;
+}
