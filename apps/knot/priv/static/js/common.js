@@ -9,6 +9,7 @@ requirejs.config({
 		template: '../template',
 		materialize: 'lib/materialize.min',
 		hammerjs: 'lib/hammer.min',
+		keyboard: 'lib/keypress-2.1.4.min.js'
 	},
 	shim: {
 		jquery: {
