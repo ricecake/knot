@@ -5,6 +5,7 @@
 	<link href="/static/css/component/videochat.css" rel="stylesheet" type="text/css">
 	<link href="/static/css/component/session.css" rel="stylesheet" type="text/css">
 	<link href="/static/css/component/whiteboard.css" rel="stylesheet" type="text/css">
+	<link href="/static/css/component/checkList.css" rel="stylesheet" type="text/css">
 	<link href="/static/css/component/fileshare.css" rel="stylesheet" type="text/css">
 	<link href="/static/css/codemirror.css" rel="stylesheet" type="text/css">
 {% endblock %}
