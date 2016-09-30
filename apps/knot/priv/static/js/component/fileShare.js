@@ -123,7 +123,7 @@ var pcm = new peerManager(function(session, Peer, initiator) {
 				buffer.push(msg.data);
 				size += msg.data.byteLength;
 				$('.knot-fileshare-container .knot-files-remote [data-session="'+ session +'"][data-name="'+ channel.label +'"] .knot-file-download').each(function(){
-					$(this).find('.knot-file-download-progress').val(size);
+					var slider = $(this).find('.knot-file-download-progress');
 					if(size === sharedFilesRemote[session][channel.label].size) {
 						var received = new Blob(buffer);
 						var objUrl = URL.createObjectURL(received);
@@ -132,7 +132,10 @@ var pcm = new peerManager(function(session, Peer, initiator) {
 						link.download = channel.label;
 						$(this).addClass('complete');
 						$(link).text("Download File");
+						slider.hide();
 						channel.close();
+					} else {
+						slider.val(size);
 					}
 				});
 			}
