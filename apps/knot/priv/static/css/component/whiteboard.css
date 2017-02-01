@@ -1,28 +1,28 @@
-.viewer {
+.whiteboard .viewer {
 	width: 15px;
 	height: 15px;
 	display: inline-block;
 }
 
-.info-bar {
+.whiteboard .info-bar {
 	position: fixed;
 	top: 3px;
 	width: 50px;
 	left: calc(100% - 50px);
 }
 
-.controls {
+.whiteboard .controls {
 	bottom: 85%;
 	width: 100%;
 	height:15%;
 }
 
-.size-control {
+.whiteboard .size-control {
 	width: 50%;
 	display: inline-block;
 }
 
-.canvas-container {
+.whiteboard .canvas-container {
 	position: relative;
 	cursor: none;
 	border-bottom: 3px solid black;
@@ -30,7 +30,7 @@
 	height: 85%;
 }
 
-.canvas {
+.whiteboard .canvas {
 	position: absolute;
 	top: 0;
 	left: 0;
@@ -38,10 +38,10 @@
 	height:100%;
 }
 
-.system-overlay {
+.whiteboard .system-overlay {
 	z-index: 200;
 }
 
-.canvas {
+.whiteboard .canvas {
 	z-index: 100;
 }
